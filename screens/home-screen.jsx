@@ -1,28 +1,17 @@
-import { StyleSheet, View, Text, Image } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
+import { Image } from 'expo-image'
+import { ProgressBar } from '../components/home-screen/progress-bar'
 
 export const HomeScreen = () => {
   return (
     <>
-      <View style={styles.container}>
-        <View style={styles.textContainer}>
-          <Text>Hello World</Text>
-        </View>
-        <View style={styles.imageRow}>
-          <View>
-            <Image
-              source={require("../images/img01.jpg")}
-              style={styles.image}
-            />
-          </View>
-          <View>
-            <Image
-              source={require("../images/img01.jpg")}
-              style={styles.image}
-            />
-          </View>
-        </View>
-        <View style={styles.textContainer}>
-          <Text>Hello Again</Text>
+      <View style={styles.screen}>
+        <ProgressBar current={4} total={5} />
+        <View style={styles.treeContainer}>
+          <Image
+            source={require('../images/hamster-meme.gif')}
+            style={styles.gif}
+          />
         </View>
       </View>
     </>
@@ -30,32 +19,19 @@ export const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: "column",
+  screen: {
+    flex: 1,
     alignItems: "center",
-    justifyContent: "flex-end",
-    paddingBottom: 50,
   },
-  textContainer: {
-    backgroundColor: "white",
-    borderWidth: 2,
-    borderColor: "black",
-    height: 50,
-    width: 210,
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 10,
-    marginBottom: 20,
-    overflow: "hidden",
+  treeContainer: {
+    marginTop: 10,
+    height: '50%',
+    width: '80%',
+    borderWidth: 1,
+    borderColor: 'black',
   },
-  imageRow: {
-    flexDirection: "row",
-    gap: 10,
-  },
-  image: {
-    width: 100,
-    height: 100,
-    marginBottom: 10,
-    borderRadius: 10,
+  gif: {
+    height: '100%',
+    width: '100%'
   },
 });
