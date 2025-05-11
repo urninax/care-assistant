@@ -37,8 +37,7 @@ export default function App() {
             screenOptions={{
               tabBarActiveTintColor: 'black',
               tabBarInactiveTintColor: 'gray',
-              tabBarIconStyle: { width: 28, height: 28 },
-              headerShown: false
+              tabBarIconStyle: { width: 28, height: 28 }
             }}
           >
             <Tab.Screen 
@@ -47,7 +46,8 @@ export default function App() {
               options={{
                 tabBarIcon: ({focused, color, size}) => {
                   return <Ionicons name={focused ? 'home' : 'home-outline'} size={size} color={color}></Ionicons>
-                }
+                },
+                headerShown: false
               }}
             />
             <Tab.Screen
