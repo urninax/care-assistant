@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
-import { FiltersProvider } from "./utils/filters-context";
+import { SharedContextProvider } from "./utils/shared-context";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import {NavigationContainer} from '@react-navigation/native'
@@ -31,7 +31,7 @@ function HomeStack() {
 
 export default function App() {
   return (
-    <FiltersProvider>
+    <SharedContextProvider>
       <NavigationContainer>
       <Tab.Navigator
             screenOptions={{
@@ -62,7 +62,7 @@ export default function App() {
             />
           </Tab.Navigator>
       </NavigationContainer>
-    </FiltersProvider>
+    </SharedContextProvider>
   );
 }
 
