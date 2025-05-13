@@ -10,19 +10,20 @@ import { ThemeContext } from "../utils/theme-context";
 
 export const HomeScreen = () => {
   const {treeName, setTreeName} = useContext(SharedContext);
-  const { scheme, toggleScheme } = useContext(ThemeContext);
+  const { scheme } = useContext(ThemeContext);
 
   const styles = getStyles(scheme);
 
   const treeNameInputRef = useRef(null)
 
-  // const [fontsLoaded] = useFonts({
-  //   Poppins_400Regular,
-  // });
+  const [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_300Light
+  });
 
-  // if (!fontsLoaded) {
-  //   return;
-  // }
+  if (!fontsLoaded) {
+    return;
+  }
 
   return (
     <>
@@ -45,32 +46,33 @@ export const HomeScreen = () => {
             <View style={[styles.treeNameInputContainer, styles.shadow]}>
               <TextInput
                 ref={treeNameInputRef}
-                style={[styles.treeNameInput, Platform.OS === 'android' && { paddingVertical: 0 }, {fontFamily: 'Poppins_300Light'}]}
+                style={[styles.treeNameInput, styles.textColor, Platform.OS === 'android' && { paddingVertical: 0 }, {fontFamily: 'Poppins_300Light'}]}
                 placeholder="Name your tree"
+                placeholderTextColor={scheme === "dark" ? "gray" : 'lightgray'}
                 returnKeyType="done"
                 value={treeName}
                 onChangeText={setTreeName}
                 />
             </View>
             <TouchableOpacity style={[styles.editTreeNameIconContainer, styles.shadow]} onPress={() => treeNameInputRef.current?.focus()}>
-              <Ionicons name='pencil' size={25}></Ionicons>
+              <Ionicons name='pencil' size={25} style={styles.textColor}></Ionicons>
             </TouchableOpacity>
           </View>
         </View>
         <View style={styles.treeContainer}>
           <Image
-            // source={require('../images/hamster-meme.gif')}
+            source={require('../images/hamster-meme.gif')}
             style={styles.gif}
           />
         </View>
         <View style={styles.motivationalTextContainer}>
-          <Text style={[styles.motivationalText1, styles.shadow]}>{`Your tree is healing!`}</Text>
-          <Text style={[styles.motivationalText2, styles.shadow]}>{`Keep it this way!`}</Text>
+          <Text style={[styles.motivationalText1, styles.shadow, styles.textColor]}>{`Your tree is healing!`}</Text>
+          <Text style={[styles.motivationalText2, styles.shadow, styles.textColor]}>{`Keep it this way!`}</Text>
         </View>
         <TouchableOpacity style={[styles.progressContainer, styles.shadow]}>
           <View style={styles.progressTextContainer}>
-            <Text style={[styles.label]}>Your progress</Text>
-            <Ionicons name='chevron-forward-outline' size={20} style={{ marginLeft: 'auto' }}></Ionicons>
+            <Text style={[styles.label, styles.textColor]}>Your progress</Text>
+            <Ionicons name='chevron-forward-outline' size={20} style={[{ marginLeft: 'auto' }, styles.textColor]}></Ionicons>
           </View>
             <ProgressBar current={4} total={5} />
         </TouchableOpacity>
@@ -103,9 +105,9 @@ const getStyles = (scheme) =>
       width: '100%',
       height: '100%',
       borderWidth: 1,
-      borderColor: 'lightgray',
+      borderColor: scheme === 'dark' ? "#1c1c1e" : "lightgray",
       borderRadius: 8,
-      backgroundColor: 'white',
+      backgroundColor: scheme === 'dark' ? '#1c1c1e' : 'white',
       alignItems: 'center',
       justifyContent: 'center'
     },
@@ -116,9 +118,9 @@ const getStyles = (scheme) =>
       height: '100%',
       aspectRatio: 1,
       borderWidth: 1,
-      borderColor: 'lightgray',
+      borderColor: scheme === 'dark' ? "#1c1c1e" : "lightgray",
       borderRadius: 8,
-      backgroundColor: 'white',
+      backgroundColor: scheme === 'dark' ? '#1c1c1e' : 'white',
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -139,10 +141,9 @@ const getStyles = (scheme) =>
       width: '100%'
     },
     motivationalTextContainer: {
-      marginTop: 10,
+      marginTop: 5,
       width: '90%',
       borderColor: 'lightgray',
-      marginTop: 10,
     },
     motivationalText1: {
       fontSize: 23,
@@ -185,29 +186,35 @@ const getStyles = (scheme) =>
       shadowRadius: 10
     },
     progressContainer: {
-      height: '10%',
+      height: '11%',
       width: '90%',
       borderWidth: 1,
-      borderColor: 'lightgray',
+      borderColor: scheme === 'dark' ? "#1c1c1e" : "lightgray",
       borderRadius: 10,
       marginTop: 10,
-      backgroundColor: 'white',
+      backgroundColor: scheme === 'dark' ? '#1c1c1e' : 'white',
       paddingHorizontal: 15,
       justifyContent:'center',
     },  
     progressTextContainer: {
-      flexDirection: 'row'
+      flexDirection: 'row',
+      alignItems: 'center'
     },
     label: {
         // fontWeight: 'bold',
+        fontFamily: 'Poppins_400Regular',
         fontSize: 18,
     },
     shadow: {
-      shadowOpacity: 0.3,
+      shadowOpacity: 0.2,
       shadowOffset: {
         width: 1,
         height: 1
       },
       shadowRadius: 7,
+      shadowColor: scheme === "dark" ? "#fff" : "#000"
+    },
+    textColor: {
+      color: scheme === "dark" ? "#fff" : "#000"
     }
   });
