@@ -92,7 +92,7 @@ const getStyles = (scheme) =>
       flexDirection: 'row',
       width: '100%',
       height: '5%',
-      marginTop: 10,
+      marginTop: 15,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -132,6 +132,8 @@ const getStyles = (scheme) =>
     treeContainer: {
       marginTop: 15,
       height: '65%',
+      marginTop: 15,
+      height: '65%',
       width: '90%',
       borderWidth: 1,
       borderColor: 'lightgray',
@@ -141,7 +143,7 @@ const getStyles = (scheme) =>
       width: '100%'
     },
     motivationalTextContainer: {
-      marginTop: 5,
+      marginTop: 10,
       width: '90%',
       borderColor: 'lightgray',
     },
@@ -202,6 +204,9 @@ const getStyles = (scheme) =>
       alignItems: 'center'
     },
     label: {
+      // fontWeight: 'bold',
+      fontFamily: 'Poppins_400Regular',
+      fontSize: 18,
       // fontWeight: 'bold',
       fontFamily: 'Poppins_400Regular',
       fontSize: 18,
