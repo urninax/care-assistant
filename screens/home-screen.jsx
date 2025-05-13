@@ -46,7 +46,7 @@ export const HomeScreen = () => {
             <View style={[styles.treeNameInputContainer, styles.shadow]}>
               <TextInput
                 ref={treeNameInputRef}
-                style={[styles.treeNameInput, styles.textColor, Platform.OS === 'android' && { paddingVertical: 0 }, {fontFamily: 'Poppins_300Light'}]}
+                style={[styles.treeNameInput, styles.textColor, Platform.OS === 'android' && { paddingVertical: 0, includeFontPadding: false }, {fontFamily: 'Poppins_300Light'}]}
                 placeholder="Name your tree"
                 placeholderTextColor={scheme === "dark" ? "gray" : 'lightgray'}
                 returnKeyType="done"
@@ -127,11 +127,11 @@ const getStyles = (scheme) =>
     treeNameInput: {
       fontSize: 25,
       width: '100%',
-      textAlign: 'center'
+      textAlign: 'center',
     },
     treeContainer: {
-      marginTop: 10,
-      height: '70%',
+      marginTop: 15,
+      height: '65%',
       width: '90%',
       borderWidth: 1,
       borderColor: 'lightgray',
@@ -191,7 +191,8 @@ const getStyles = (scheme) =>
       borderWidth: 1,
       borderColor: scheme === 'dark' ? "#1c1c1e" : "lightgray",
       borderRadius: 10,
-      marginTop: 10,
+      marginTop: 'auto',
+      marginBottom: 30,
       backgroundColor: scheme === 'dark' ? '#1c1c1e' : 'white',
       paddingHorizontal: 15,
       justifyContent:'center',
@@ -201,18 +202,25 @@ const getStyles = (scheme) =>
       alignItems: 'center'
     },
     label: {
-        // fontWeight: 'bold',
-        fontFamily: 'Poppins_400Regular',
-        fontSize: 18,
+      // fontWeight: 'bold',
+      fontFamily: 'Poppins_400Regular',
+      fontSize: 18,
     },
     shadow: {
-      shadowOpacity: 0.2,
-      shadowOffset: {
-        width: 1,
-        height: 1
-      },
-      shadowRadius: 7,
-      shadowColor: scheme === "dark" ? "#fff" : "#000"
+      shadowColor: scheme === "dark" ? "#fff" : "#000",
+      ...Platform.select({
+        ios:{
+          shadowOpacity: 0.2,
+          shadowOffset: {
+            width: 1,
+            height: 1
+          },
+          shadowRadius: 7,
+        },
+        android:{
+          elevation: 5
+        }
+      })
     },
     textColor: {
       color: scheme === "dark" ? "#fff" : "#000"
