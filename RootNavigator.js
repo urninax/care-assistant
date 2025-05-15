@@ -10,6 +10,7 @@ import { ThemeContext }    from "./utils/theme-context";
 import { HomeScreen }       from "./screens/home-screen";
 import { CalendarScreen }   from "./screens/calendar-screen";
 import { ProfileScreen }    from "./screens/profile-screen";
+import TasksScreen from "./screens/tasks-screen";
 
 const Stack = createNativeStackNavigator();
 const Tab   = createBottomTabNavigator();
@@ -90,6 +91,14 @@ export default function RootNavigator() {
             ),
           }}
         />
+          <Tab.Screen
+              name={"Tasks"}
+              component={TasksScreen}
+              options={{
+                  tabBarIcon: ({ focused, color, size }) => (
+                      <Ionicons name={focused ? "checkmark-done" : "checkmark-done-outline"} size={size} color={color} />
+                  ),
+              }}/>
       </Tab.Navigator>
     </NavigationContainer>
   );
