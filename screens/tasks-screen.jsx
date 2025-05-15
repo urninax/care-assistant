@@ -230,5 +230,5 @@ const styles = StyleSheet.create({
     modalContent: { backgroundColor: '#fff', padding: 20, borderRadius: 10, width: '80%' },
     modalHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 12 }
 });
-
+//nigga
 export default TasksScreen;
