@@ -61,7 +61,7 @@ export const HomeScreen = () => {
         </View>
         <View style={styles.treeContainer}>
           <Image
-            source={require('../images/hamster-meme.gif')}
+            source={require('../images/tree-without-background.gif')}
             style={styles.gif}
           />
         </View>
@@ -135,7 +135,7 @@ const getStyles = (scheme) =>
       marginTop: 15,
       height: '65%',
       width: '90%',
-      borderWidth: 1,
+      // borderWidth: 1,
       borderColor: 'lightgray',
     },
     gif: {
