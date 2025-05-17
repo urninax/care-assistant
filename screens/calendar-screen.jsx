@@ -4,7 +4,7 @@ import { ThemeContext } from "../utils/theme-context";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-//tlw überschreiben von LocaleConfig, um Anzeige der Tagesnamen anzupassen
+// Teilweise überschreiben von LocaleConfig, um Anzeige der Tagesnamen anzupassen
 LocaleConfig.locales["en-custom"] = {
   monthNames: [
     "January",
@@ -43,14 +43,14 @@ LocaleConfig.locales["en-custom"] = {
     "Friday",
     "Saturday",
   ],
-  dayNamesShort: ["S", "M", "T", "W", "T", "F", "S"], //diese Zeile wurde geändert, um Tage nur durch einen Buchstaben, statt durch drei (zb. "Mon") anzuzeigen
+  dayNamesShort: ["S", "M", "T", "W", "T", "F", "S"], // Zeile wurde geändert, um Tage nur durch einen Buchstaben, statt durch drei (zb. "Mon") anzuzeigen
   today: "Today",
 };
 
-//aktivieren des benutzerdefinierten Settings
+// Aktivieren des benutzerdefinierten Settings
 LocaleConfig.defaultLocale = "en-custom";
 
-//anlegen von emojis für bestimmte tage
+// Anlegen von emojis für bestimmte tage
 const emojiMap = {
   "2025-05-01": "happy-outline",
   "2025-05-05": "happy-outline",
@@ -63,93 +63,92 @@ const emojiMap = {
   "2025-05-13": "sad-outline",
 };
 
-//farbzuweisung zu emojis
+//Farbzuweisung zu Emojis
 const iconColors = {
   "happy-outline": "green",
   "sad-outline": "red",
 };
 
-
 export const CalendarScreen = () => {
-    const { scheme } = useContext(ThemeContext)
-    
-    const styles = getStyles(scheme)
-    return (
-        <View style={styles.screen}>
-            <Calendar
-            key={scheme}
-            //Styling von Monatstext und Tagesnamen über theme prop
-            theme={{
-                "stylesheet.calendar.header": {
-                monthText: {
-                    color: scheme == 'dark' ? 'white' : 'black',
-                    fontSize: 30,
-                    fontWeight: "bold",
-                    marginTop: 30,
-                    marginBottom: 30,
-                },
-                dayHeader: {
-                    color: scheme == 'dark' ? 'white' : 'black',
-                    backgroundColor: scheme == 'dark' ? '#121212' : '#fff',
-                    fontWeight: "bold",
-                    fontSize: 20,
-                },
-                },
-                backgroundColor: scheme == 'dark' ? '#121212' : '#fff',
-                calendarBackground: scheme == 'dark' ? '#121212' : '#fff'
-            }}
-            //mit dayComponent eigene Tagesanzeige erstellt; wenn Tag nicht im aktuellen Monat ist ("disabled") Farbe = grey, sonst schwarz; Icon wird angezeigt; aus emojiMap dem Tag zugewiesen
-            dayComponent={({ date, state }) => {
-                const iconName = emojiMap[date.dateString];
-                return (
-                <View style={[styles.dayContainer]}>
-                    <Text
-                    style={[
-                        styles.dayText,
-                        state === "disabled" && { color: "#ccc" },
-                    ]}
-                    >
-                    {date.day}
-                    </Text>
-                    {iconName && (
-                    <Ionicons
-                        name={iconName}
-                        size={30}
-                        color={iconColors[iconName]}
-                    />
-                    )}
-                </View>
-                );
-            }}
-            />
-        </View>
-    );
+  const { scheme } = useContext(ThemeContext);
+
+  const styles = getStyles(scheme);
+  return (
+    <View style={styles.screen}>
+      <Calendar
+        key={scheme}
+        // Styling von Monatstext und Tagesnamen über theme prop
+        theme={{
+          "stylesheet.calendar.header": {
+            monthText: {
+              color: scheme == "dark" ? "white" : "black",
+              fontSize: 30,
+              fontWeight: "bold",
+              marginTop: 30,
+              marginBottom: 30,
+            },
+            dayHeader: {
+              color: scheme == "dark" ? "white" : "black",
+              backgroundColor: scheme == "dark" ? "#121212" : "#fff",
+              fontWeight: "bold",
+              fontSize: 20,
+            },
+          },
+          backgroundColor: scheme == "dark" ? "#121212" : "#fff",
+          calendarBackground: scheme == "dark" ? "#121212" : "#fff",
+        }}
+        // Mit dayComponent eigene Tagesanzeige erstellt; wenn Tag nicht im aktuellen Monat ist ("disabled") Farbe = grey, sonst schwarz; Icon wird angezeigt; aus emojiMap dem Tag zugewiesen
+        dayComponent={({ date, state }) => {
+          const iconName = emojiMap[date.dateString];
+          return (
+            <View style={[styles.dayContainer]}>
+              <Text
+                style={[
+                  styles.dayText,
+                  state === "disabled" && { color: "#ccc" },
+                ]}
+              >
+                {date.day}
+              </Text>
+              {iconName && (
+                <Ionicons
+                  name={iconName}
+                  size={30}
+                  color={iconColors[iconName]}
+                />
+              )}
+            </View>
+          );
+        }}
+      />
+    </View>
+  );
 };
 
-const getStyles = (scheme) => 
-    StyleSheet.create({
-        screen:{
-            flex: 1,
-            backgroundColor: scheme == 'dark' ? '#121212' : '#fff'
-        },
-        dayContainer: {
-            width: 60,
-            height: 70,
-            justifyContent: "top",
-            alignItems: "center",
-            borderTopWidth: 1,
-            borderTopColor: scheme == 'dark' ? '#363636' : 'lightgray',
-            backgroundColor: scheme == 'dark' ? '#121212' : '#fff',
-            padding: 5,
-            margin: 0,
-        },
-        dayText: {
-            fontSize: 20,
-            marginBottom: 4,
-            color: scheme == 'dark' ? 'white' : 'black',
-        },
-        todayHighlight: {
-            borderTopWidth: 2,
-            borderTopColor: scheme == 'dark' ? 'white' : 'black',
-        },
-});
+const getStyles = (scheme) =>
+  StyleSheet.create({
+    screen: {
+      flex: 1,
+      backgroundColor: scheme == "dark" ? "#121212" : "#fff",
+    },
+    dayContainer: {
+      width: 60,
+      height: 70,
+      justifyContent: "top",
+      alignItems: "center",
+      borderTopWidth: 1,
+      borderTopColor: scheme == "dark" ? "#363636" : "#D3D3D3",
+      backgroundColor: scheme == "dark" ? "#121212" : "#fff",
+      padding: 5,
+      margin: 0,
+    },
+    dayText: {
+      fontSize: 20,
+      marginBottom: 4,
+      color: scheme == "dark" ? "#fff" : "#000",
+    },
+    todayHighlight: {
+      borderTopWidth: 2,
+      borderTopColor: scheme == "dark" ? "#fff" : "#000",
+    },
+  });

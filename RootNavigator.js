@@ -1,6 +1,10 @@
 // RootNavigator.js
 import React, { useContext, useMemo } from "react";
-import { NavigationContainer, DefaultTheme, DarkTheme } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  DefaultTheme,
+  DarkTheme,
+} from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -12,34 +16,43 @@ import { CalendarScreen }   from "./screens/calendar-screen";
 import { ProfileScreen }    from "./screens/profile-screen";
 import TasksScreen from "./screens/tasks-screen";
 
+
 const Stack = createNativeStackNavigator();
-const Tab   = createBottomTabNavigator();
+const Tab = createBottomTabNavigator();
 
 function HomeStack() {
-    const { scheme } = useContext(ThemeContext);
+  const { scheme } = useContext(ThemeContext);
 
-    return (
-        <Stack.Navigator
-            screenOptions={{
-                headerStyle: {
-                backgroundColor: scheme === "dark" ? "#1c1c1e" : "#FFF",
-                },
-                headerTintColor: scheme === "dark" ? "#fff" : "#1c1c1e",
-            }}
-        >
-        <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={({ navigation }) => ({
-            headerRight: () => (
-                <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-                <Ionicons name="person-outline" size={27} color={scheme === "dark" ? "#FFF" : "#2C2C2E"} />
-                </TouchableOpacity>
-            ),
-            })}
-        />
-        <Stack.Screen name="Profile" component={ProfileScreen} />
-        </Stack.Navigator>
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerStyle: {
+          backgroundColor: scheme === "dark" ? "#1c1c1e" : "#FFF",
+        },
+        headerTintColor: scheme === "dark" ? "#fff" : "#1c1c1e",
+        headerTitleStyle: {
+          fontSize: 30,
+          fontWeight: "bold",
+        },
+      }}
+    >
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={({ navigation }) => ({
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+              <Ionicons
+                name="person-outline"
+                size={27}
+                color={scheme === "dark" ? "#FFF" : "#2C2C2E"}
+              />
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+    </Stack.Navigator>
   );
 }
 
@@ -59,16 +72,20 @@ export default function RootNavigator() {
           tabBarInactiveTintColor: scheme === "dark" ? "#8E8E93" : "gray",
           tabBarIconStyle: { width: 28, height: 28 },
 
-        //   tabBarActiveBackgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
-        //   tabBarInactiveBackgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
+          //   tabBarActiveBackgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
+          //   tabBarInactiveBackgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
           tabBarStyle: {
             backgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
           },
-          
+
           headerStyle: {
             backgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
           },
           headerTintColor: scheme === "dark" ? "#fff" : "#red",
+          headerTitleStyle: {
+            fontSize: 30,
+            fontWeight: "bold", // optional
+          },
         }}
       >
         <Tab.Screen
@@ -77,9 +94,26 @@ export default function RootNavigator() {
           options={{
             tabBarLabel: "Home",
             tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons name={focused ? "home" : "home-outline"} size={size} color={color} />
+              <Ionicons
+                name={focused ? "home" : "home-outline"}
+                size={size}
+                color={color}
+              />
             ),
-            headerShown: false
+            headerShown: false,
+          }}
+        />
+        <Tab.Screen
+          name="Goals"
+          component={GoalScreen}
+          options={{
+            tabBarIcon: ({ focused, color, size }) => (
+              <Ionicons
+                name={focused ? "stats-chart" : "stats-chart-outline"}
+                size={size}
+                color={color}
+              />
+            ),
           }}
         />
         <Tab.Screen
@@ -87,7 +121,11 @@ export default function RootNavigator() {
           component={CalendarScreen}
           options={{
             tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons name={focused ? "calendar" : "calendar-outline"} size={size} color={color} />
+              <Ionicons
+                name={focused ? "calendar" : "calendar-outline"}
+                size={size}
+                color={color}
+              />
             ),
           }}
         />
