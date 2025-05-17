@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@expo-google-fonts/poppins": "^0.3.1",
+    "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "^2.1.2",
     "@react-navigation/bottom-tabs": "^7.3.12",
     "@react-navigation/material-top-tabs": "^7.2.13",
@@ -23,6 +24,8 @@
     "react-native": "0.79.2",
     "react-native-calendars": "^1.1312.0",
     "react-native-circular-progress": "^1.4.1",
+    "react-native-fs": "^2.20.0",
+    "react-native-paper": "^5.14.4",
     "react-native-svg": "^15.11.2",
     "react-native-vector-icons": "^10.2.0"
   },
