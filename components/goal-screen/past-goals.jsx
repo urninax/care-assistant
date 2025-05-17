@@ -2,93 +2,53 @@ import {
   View,
   Text,
   StyleSheet,
-  TouchableOpacity,
-  Modal,
   TextInput,
   Pressable,
   FlatList,
-  Alert,
 } from "react-native";
 import React, { useContext, useState, useEffect } from "react";
-import { ThemeContext } from "../../utils/theme-context";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useNavigation, useRoute } from "@react-navigation/native";
 
-export const PastGoals = () => {
+import { ThemeContext } from "../../utils/theme-context";
+
+export const PastGoals = ({ navigation, route }) => {
   const { scheme } = useContext(ThemeContext);
-
-  const [goals, setGoals] = useState([]); // Liste der erledigten Ziele
-  const [editingGoal, setEditingGoal] = useState(null); // Ziel, das bearbeitet wird
-  const [showModal, setShowModal] = useState(false); // Bearbeitungsfenster sichtbar oder nicht
-  const [newGoalName, setNewGoalName] = useState(""); // Name des bearbeiteten Ziels
+  const [goals, setGoals] = useState([]);
 
   const styles = getStyles(scheme);
-  const navigation = useNavigation();
-  const route = useRoute();
 
   // Verschobene Ziele von anderen Screens
   useEffect(() => {
-    if (route.params?.goalToAdd) {
-      setGoals((prevGoals) => [...prevGoals, route.params.goalToAdd]);
-      navigation.setParams({ goalToAdd: null }); // Parameter zurücksetzen
+    if (route.params?.goalAdd) {
+      setGoals((prevGoals) => [...prevGoals, route.params.goalAdd]);
+      navigation.setParams({ goalAdd: null });
     }
-  }, [route.params?.goalToAdd]);
+  }, [route.params?.goalAdd, navigation]);
 
   // Ziel bearbeiten
   const editGoal = () => {
-    if (newGoalName !== "" && editingGoal) {
+    if (item.id) {
       const updatedGoals = goals.map((goal) =>
-        goal.id === editingGoal.id ? { ...goal, name: newGoalName } : goal
+        goal.id === item.id ? { ...goal, name: item.name } : goal
       );
       setGoals(updatedGoals);
-      setNewGoalName("");
-      setEditingGoal(null);
-      setShowModal(false);
     }
   };
 
   // Ziel verschieben
-  const moveGoal = (goalId, targetScreen) => {
-    // Ziel aus der Liste entfernen
-    const goalToMove = goals.find((goal) => goal.id === goalId);
-    if (goalToMove) {
+  const moveGoal = (goalId, nextScreen) => {
+    // Ziel aus goals entfernen
+    const goalMove = goals.find((goal) => goal.id === goalId);
+    if (goalMove) {
       const updatedGoals = goals.filter((goal) => goal.id !== goalId);
       setGoals(updatedGoals);
 
       // Zu entsprechendem Ziel-Screen navigieren und das ausgewählte Ziel verschieben
-      navigation.navigate(targetScreen, {
-        goalToAdd: goalToMove,
+      navigation.navigate(nextScreen, {
+        goalAdd: goalMove,
       });
-
-      // Benachrichtigung anzeigen, dass Ziel verschoben wurde
-      Alert.alert("Goal moved");
     }
   };
-
-  // Bearbeitung des Ziels starten
-  const startEditing = (goal) => {
-    setEditingGoal(goal);
-    setNewGoalName(goal.name);
-    setShowModal(true);
-  };
-
-  // Einzelnes Ziel rendern
-  const renderGoalItem = ({ item }) => (
-    <View style={styles.goalItem}>
-      <Text style={styles.goalText}>{item.name}</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={() => startEditing(item)}>
-          <Ionicons name="pencil" size={30} color="#007AFF" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => moveGoal(item.id, "CurrentGoals")}>
-          <Ionicons name="play" size={30} color="#4CD964" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => moveGoal(item.id, "PauseGoals")}>
-          <Ionicons name="pause" size={30} color="#FF9500" />
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
 
   return (
     <View style={styles.screen}>
@@ -100,48 +60,58 @@ export const PastGoals = () => {
       ) : (
         <FlatList
           data={goals}
-          renderItem={renderGoalItem}
+          renderItem={({ item }) => (
+            <SingleGoal moveGoal={moveGoal} editGoal={editGoal} item={item} />
+          )}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}
         />
       )}
+    </View>
+  );
+};
 
-      {/* Bearbeitungsfenster */}
-      <Modal visible={showModal} transparent={true} animationType="slide">
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Edit goal</Text>
+// Einzelnes Ziel rendern
+const SingleGoal = ({ item, moveGoal, editGoal }) => {
+  const { scheme } = useContext(ThemeContext);
+  const [isEditing, setIsEditing] = useState(false);
 
-            <TextInput
-              style={styles.input}
-              value={newGoalName}
-              onChangeText={setNewGoalName}
-              placeholder="Name of goal"
-              placeholderTextColor="#999"
-            />
-
-            <View style={styles.modalButtons}>
-              <Pressable
-                style={[styles.button, styles.cancelButton]}
-                onPress={() => {
-                  setShowModal(false);
-                  setNewGoalName("");
-                  setEditingGoal(null);
-                }}
-              >
-                <Text style={styles.buttonText}>Cancel</Text>
-              </Pressable>
-
-              <Pressable
-                style={[styles.button, styles.saveButton]}
-                onPress={editGoal}
-              >
-                <Text style={styles.buttonText}>Save</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
+  const styles = getStyles(scheme);
+  return (
+    <View style={styles.goalItem}>
+      {isEditing ? (
+        <TextInput
+          style={styles.input}
+          value={item.name}
+          onChangeText={(text) => {
+            editGoal({
+              ...item,
+              name: text,
+            });
+          }}
+        ></TextInput>
+      ) : (
+        <Text style={styles.goalText}>{item.name}</Text>
+      )}
+      <View style={styles.buttonContainer}>
+        <Pressable
+          onPress={() => {
+            setIsEditing(!isEditing);
+          }}
+        >
+          <Ionicons
+            name={isEditing ? "checkmark" : "pencil"}
+            size={30}
+            color="#007AFF"
+          />
+        </Pressable>
+        <Pressable onPress={() => moveGoal(item.id, "CurrentGoals")}>
+          <Ionicons name="play" size={30} color="#4CD964" />
+        </Pressable>
+        <Pressable onPress={() => moveGoal(item.id, "PauseGoals")}>
+          <Ionicons name="pause" size={30} color="#FF9500" />
+        </Pressable>
+      </View>
     </View>
   );
 };
@@ -182,37 +152,9 @@ const getStyles = (scheme) =>
       flexDirection: "column",
       gap: 10,
     },
-    addButton: {
-      position: "absolute",
-      bottom: 20,
-      right: 20,
-      backgroundColor: scheme === "dark" ? "#0A84FF" : "#007AFF",
-      width: 56,
-      height: 56,
-      borderRadius: 30,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    modalContainer: {
-      flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
-      backgroundColor: "rgba(0, 0, 0, 0.5)",
-    },
-    modalContent: {
-      backgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
-      padding: 20,
-      borderRadius: 8,
-      width: "80%",
-    },
-    modalTitle: {
-      fontSize: 20,
-      fontWeight: "bold",
-      marginBottom: 16,
-      textAlign: "center",
-      color: scheme === "dark" ? "#fff" : "#000",
-    },
     input: {
+      width: "80%",
+      fontSize: 25,
       borderWidth: 1,
       borderColor: scheme === "dark" ? "#2C2C2E" : "#C7C7CC",
       borderRadius: 5,
@@ -220,26 +162,5 @@ const getStyles = (scheme) =>
       marginBottom: 16,
       color: scheme === "dark" ? "#fff" : "#000",
       backgroundColor: scheme === "dark" ? "#2C2C2E" : "#F2F2F7",
-    },
-    modalButtons: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    button: {
-      padding: 12,
-      borderRadius: 5,
-      flex: 1,
-      marginHorizontal: 5,
-    },
-    cancelButton: {
-      backgroundColor: scheme === "dark" ? "#2C2C2E" : "#E5E5EA",
-    },
-    saveButton: {
-      backgroundColor: scheme === "dark" ? "#0A84FF" : "#007AFF",
-    },
-    buttonText: {
-      color: scheme === "dark" ? "#fff" : "#000",
-      textAlign: "center",
-      fontWeight: "bold",
     },
   });

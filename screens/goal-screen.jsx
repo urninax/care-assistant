@@ -7,14 +7,14 @@ import { CurrentGoals } from "../components/goal-screen/current-goals";
 import { PauseGoals } from "../components/goal-screen/pause-goals";
 import { PastGoals } from "../components/goal-screen/past-goals";
 
-const GoalTab = createMaterialTopTabNavigator();
+const Tab = createMaterialTopTabNavigator();
 
 // GoalScreen nur zum navigieren der Subscreens (CurrentGoals, PauseGoals, PastGoals)
 export const GoalScreen = () => {
   const { scheme } = useContext(ThemeContext);
 
   return (
-    <GoalTab.Navigator
+    <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: scheme === "dark" ? "#0A84FF" : "black",
         tabBarInactiveTintColor: scheme === "dark" ? "#8E8E93" : "gray",
@@ -29,35 +29,27 @@ export const GoalScreen = () => {
         },
       }}
     >
-      <GoalTab.Screen
+      <Tab.Screen
         name="CurrentGoals"
         component={CurrentGoals}
         options={{
           tabBarLabel: "Current",
         }}
       />
-      <GoalTab.Screen
+      <Tab.Screen
         name="PauseGoals"
         component={PauseGoals}
         options={{
           tabBarLabel: "On Pause",
         }}
       />
-      <GoalTab.Screen
+      <Tab.Screen
         name="PastGoals"
         component={PastGoals}
         options={{
           tabBarLabel: "Past",
         }}
       />
-    </GoalTab.Navigator>
+    </Tab.Navigator>
   );
 };
-
-const getStyles = (scheme) =>
-  StyleSheet.create({
-    screen: {
-      flex: 1,
-      backgroundColor: scheme == "dark" ? "#121212" : "#fff",
-    },
-  });
