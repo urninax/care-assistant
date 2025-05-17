@@ -7,14 +7,15 @@ import { Image } from 'expo-image'
 import { Ionicons } from '@expo/vector-icons';
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+
 import { ProfileAvatar } from "../components/profile-screen/profile-avatar";
+import { PageButton } from "../components/profile-screen/page-button";
 
 
 export const ProfileScreen = () => {
     // const tabBarHeight = useBottomTabBarHeight();
 
     const { scheme, setScheme } = useContext(ThemeContext);
-    const [showModal, setShowModal] = useState(false);
     const styles = getStyles(scheme)
 
     const [fontsLoaded] = useFonts({
@@ -27,29 +28,6 @@ export const ProfileScreen = () => {
     if (!fontsLoaded) {
       return;
     }
-
-    const pickImage = async () => {
-      // const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      // if (status !== 'granted') {
-      //   Alert.alert(
-      //     'Access denied.',
-      //     'Gallery permission is needed to choose profile picture'
-      //   );
-      //   return;
-      // }
-  
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ['images'],
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 0.8,
-      });
-  
-      if (!result.canceled) {
-        const uri = result.assets ? result.assets[0].uri : result.uri;
-        setImageUri(uri);
-      }
-    };
 
     return (
       <SafeAreaProvider>
@@ -70,24 +48,9 @@ export const ProfileScreen = () => {
               <Text style={styles.username}>urninax</Text>
             </View>
             <View style={styles.buttonsContainer}>
-              <TouchableOpacity style={[styles.button, styles.shadow]}>
-                <View style={styles.buttonIconContainer}>
-                  <Ionicons name='settings-outline' size={33} style={styles.buttonIcon}></Ionicons>
-                </View>
-                <Text style={styles.buttonText}>Settings</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button}>
-                <View style={styles.buttonIconContainer}>
-                  <Ionicons name='notifications-outline' size={33} style={styles.buttonIcon}></Ionicons>
-                </View>
-                <Text style={styles.buttonText}>Activity</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.button}>
-                <View style={styles.buttonIconContainer}>
-                  <Ionicons name='chatbubbles-outline' size={33} style={styles.buttonIcon}></Ionicons>
-                </View>
-                <Text style={styles.buttonText}>FAQ</Text>
-              </TouchableOpacity>
+              <PageButton iconName='settings-outline' buttonText='Settings' />
+              <PageButton iconName='notifications-outline' buttonText='Activity' />
+              <PageButton iconName='chatbubbles-outline' buttonText='FAQ' />
             </View>
             <View style={styles.streakContainer}>
               <View style={styles.streakHeaderContainer}>
@@ -98,7 +61,6 @@ export const ProfileScreen = () => {
                   <Image 
                     source={require('../images/flame.svg')}
                     style={styles.streakIcon}
-                    // contentFit="contain"
                   />
                   <Text style={styles.streakText}>12</Text>
                 </View>
@@ -157,32 +119,9 @@ const getStyles = (scheme) =>
       flexDirection: 'column',
       paddingVertical: 15,
     },
-    button: {
-      borderWidth: 1,
-      borderRadius: 20,
-      height: 85,
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginVertical: 8,
-      backgroundColor: '#fff'
-    },
-    buttonIconContainer: {
-      height: '100%',
-      aspectRatio: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    buttonIcon: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      aspectRatio: 1,
-    },
-    buttonText: {
-      fontSize: 18,
-      fontFamily: 'Poppins_500Medium'
-    },
     streakContainer: {
       borderWidth: 1,
+      borderColor: 'gray',
       borderRadius: 20,
       paddingVertical: 20,
       marginTop: 5,
@@ -228,21 +167,5 @@ const getStyles = (scheme) =>
       marginTop: 25,
       marginRight: 5,
       fontWeight: 'bold',
-    },
-    shadow: {
-      shadowColor: scheme === "dark" ? "#fff" : "#000",
-      ...Platform.select({
-        ios:{
-          shadowOpacity: 0.2,
-          shadowOffset: {
-            width: 1,
-            height: 1
-          },
-          shadowRadius: 7,
-        },
-        android:{
-          elevation: 5
-        }
-      })
     },
   })
