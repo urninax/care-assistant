@@ -4,12 +4,13 @@ import { ProgressBar } from '../components/home-screen/progress-bar'
 import { useFonts, Poppins_400Regular, Poppins_300Light } from '@expo-google-fonts/poppins';
 import { TaskWidget } from "../components/home-screen/task-widget";
 import { SharedContext } from "../utils/shared-context";
-import { useContext, useState, useRef  } from "react";
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useContext, useRef} from "react";
+import { Ionicons } from '@expo/vector-icons';
 import { ThemeContext } from "../utils/theme-context";
 
 export const HomeScreen = () => {
-  const {treeName, setTreeName} = useContext(SharedContext);
+
+  const { treeName, setTreeName } = useContext(SharedContext);
   const { scheme } = useContext(ThemeContext);
 
   const styles = getStyles(scheme);
@@ -61,8 +62,9 @@ export const HomeScreen = () => {
         </View>
         <View style={styles.treeContainer}>
           <Image
-            source={require('../images/tree-without-background.gif')}
+            source={require('../images/tree-pink-stage1-1.5-0.65-1.4-cropped.gif')}
             style={styles.gif}
+            contentFit="contain"
           />
         </View>
         <View style={styles.motivationalTextContainer}>
@@ -130,10 +132,8 @@ const getStyles = (scheme) =>
       textAlign: 'center',
     },
     treeContainer: {
-      marginTop: 15,
-      height: '65%',
-      marginTop: 15,
-      height: '65%',
+      marginTop: 'auto',
+      height: '60%',
       width: '90%',
       // borderWidth: 1,
       borderColor: 'lightgray',
@@ -194,7 +194,7 @@ const getStyles = (scheme) =>
       borderColor: scheme === 'dark' ? "#1c1c1e" : "lightgray",
       borderRadius: 10,
       marginTop: 'auto',
-      marginBottom: 30,
+      marginBottom: 'auto',
       backgroundColor: scheme === 'dark' ? '#1c1c1e' : 'white',
       paddingHorizontal: 15,
       justifyContent:'center',
@@ -204,9 +204,6 @@ const getStyles = (scheme) =>
       alignItems: 'center'
     },
     label: {
-      // fontWeight: 'bold',
-      fontFamily: 'Poppins_400Regular',
-      fontSize: 18,
       // fontWeight: 'bold',
       fontFamily: 'Poppins_400Regular',
       fontSize: 18,
