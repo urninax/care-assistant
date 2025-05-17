@@ -69,6 +69,7 @@ export default function RootNavigator() {
     <>
       <StatusBar 
         barStyle={scheme === 'dark' ? "light-content" : "dark-content"}
+        backgroundColor={scheme === "dark" ? "#1c1c1e" : "#fff"}
       />
       <NavigationContainer theme={navTheme}>
         <Tab.Navigator
