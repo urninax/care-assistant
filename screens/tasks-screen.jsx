@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
     View, Text, StyleSheet, FlatList, SafeAreaView,
     TextInput, TouchableOpacity, Modal, Button
@@ -28,7 +28,7 @@ const getProgressMessage = (progress) => {
     return 'Good job!';
 };
 
-const CircularProgress = ({ progress, radius = 50, strokeWidth = 10}) => {
+const CircularProgress = ({ progress, radius = 50, strokeWidth = 10 }) => {
     const normalizedProgress = Math.min(Math.max(progress, 0), 1);
     const size = radius * 2 + strokeWidth;
     const circumference = 2 * Math.PI * radius;
@@ -69,7 +69,7 @@ const CircularProgress = ({ progress, radius = 50, strokeWidth = 10}) => {
     );
 };
 
-const TasksScreen = () => {
+const TasksScreen = ({ navigation }) => {
     const [tasks, setTasks] = useState([]);
     const [newTask, setNewTask] = useState({ title: '', category: '', current: 0, total: 0 });
     const [modalVisible, setModalVisible] = useState(false);
@@ -84,6 +84,16 @@ const TasksScreen = () => {
     useEffect(() => {
         saveTasks(tasks);
     }, [tasks]);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity onPress={() => setAddTaskModalVisible(true)} style={{ marginRight: 16 }}>
+                    <Ionicons name="add" size={28} color="#007AFF" />
+                </TouchableOpacity>
+            )
+        });
+    }, [navigation]);
 
     const loadTasks = async () => {
         try {
@@ -173,13 +183,6 @@ const TasksScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.headerRow}>
-                <Text style={styles.header}>Tasks</Text>
-                <TouchableOpacity onPress={() => setAddTaskModalVisible(true)}>
-                    <Ionicons name="add" size={32} color="#007AFF" />
-                </TouchableOpacity>
-            </View>
-
             <Text style={styles.taskCounter}>
                 Completed: {completedTasksCount} / {totalTasksCount}
             </Text>
@@ -236,8 +239,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 32
     },
-    headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-    header: { fontSize: 24, fontWeight: 'bold', paddingTop: 5 },
     input: { backgroundColor: '#fff', padding: 8, marginVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: '#ddd' },
     categoryContainer: { marginBottom: 24 },
     categoryHeader: {
