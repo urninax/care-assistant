@@ -23,8 +23,8 @@ const getProgressMessage = (progress) => {
     if (progress === 0) return 'Start right now';
     if (progress < 0.3) return 'Good start';
     if (progress < 0.6) return 'You are doing great!';
-    if (progress < 0.9) return 'Go girl!';
-    if (progress < 1) return 'Almost done';
+    if (progress < 0.9) return 'More than halfway done!';
+    if (progress < 1) return 'Almost done!';
     return 'Good job!';
 };
 
@@ -76,6 +76,10 @@ const TasksScreen = ({ navigation }) => {
     const [addTaskModalVisible, setAddTaskModalVisible] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [addValue, setAddValue] = useState(0);
+
+    // Для удаления
+    const [taskToDelete, setTaskToDelete] = useState(null);
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
     useEffect(() => {
         loadTasks();
@@ -152,6 +156,21 @@ const TasksScreen = ({ navigation }) => {
         setModalVisible(false);
     };
 
+    // Новые функции для удаления
+    const openDeleteModal = (task) => {
+        setTaskToDelete(task);
+        setDeleteModalVisible(true);
+    };
+
+    const confirmDeleteTask = () => {
+        if (taskToDelete) {
+            const updatedTasks = tasks.filter(task => task.id !== taskToDelete.id);
+            setTasks(updatedTasks);
+            setTaskToDelete(null);
+            setDeleteModalVisible(false);
+        }
+    };
+
     const renderItem = ({ item }) => {
         const progress = item.current / item.total;
         return (
@@ -161,9 +180,16 @@ const TasksScreen = ({ navigation }) => {
                     <Text>{`${item.current}/${item.total}`}</Text>
                     <ProgressBar progress={progress} color={progress >= 1 ? 'green' : 'red'} style={styles.progressBar} />
                 </View>
-                <TouchableOpacity onPress={() => openAddValueModal(item)} style={styles.addButton}>
-                    <Ionicons name="add-circle" size={28} color="#007AFF" />
-                </TouchableOpacity>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={() => openAddValueModal(item)} style={styles.addButton}>
+                        <Ionicons name="add-circle" size={28} color="#007AFF" />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={() => openDeleteModal(item)} style={styles.deleteButton}>
+                        <Ionicons name="trash" size={28} color="red" />
+                    </TouchableOpacity>
+                </View>
             </View>
         );
     };
@@ -197,6 +223,7 @@ const TasksScreen = ({ navigation }) => {
                 keyExtractor={(item) => item}
             />
 
+            {/* Модал добавления значения */}
             <Modal visible={modalVisible} transparent animationType="slide">
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
@@ -208,10 +235,12 @@ const TasksScreen = ({ navigation }) => {
                             onChangeText={(text) => setAddValue(parseInt(text) || 0)}
                         />
                         <Button title="Confirm" onPress={handleConfirmAddValue} />
+                        <Button title="Cancel" color="red" onPress={() => setModalVisible(false)} />
                     </View>
                 </View>
             </Modal>
 
+            {/* Модал добавления задачи */}
             <Modal visible={addTaskModalVisible} transparent animationType="slide">
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
@@ -222,6 +251,19 @@ const TasksScreen = ({ navigation }) => {
                         <TextInput placeholder="Total" keyboardType="numeric" value={String(newTask.total)} onChangeText={(text) => setNewTask({ ...newTask, total: parseInt(text) || 0 })} style={styles.input} />
                         <Button title="Add Task" onPress={handleAddTask} />
                         <Button title="Cancel" color="red" onPress={() => setAddTaskModalVisible(false)} />
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Модал подтверждения удаления */}
+            <Modal visible={deleteModalVisible} transparent animationType="fade">
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={{ marginBottom: 20 }}>
+                            Are you sure you want to delete the task "{taskToDelete?.title}"?
+                        </Text>
+                        <Button title="Delete" color="red" onPress={confirmDeleteTask} />
+                        <Button title="Cancel" onPress={() => setDeleteModalVisible(false)} />
                     </View>
                 </View>
             </Modal>
@@ -259,6 +301,7 @@ const styles = StyleSheet.create({
     title: { fontSize: 18, fontWeight: '500' },
     progressBar: { height: 10, borderRadius: 5, marginTop: 4 },
     addButton: { marginLeft: 8 },
+    deleteButton: { marginLeft: 12 },
     modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
     modalContent: { backgroundColor: '#fff', padding: 20, borderRadius: 10, width: '80%' },
     modalHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 12 },
