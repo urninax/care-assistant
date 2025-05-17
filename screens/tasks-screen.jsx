@@ -6,6 +6,7 @@ import {
 import { ProgressBar } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const defaultTasks = [
     { id: '1', category: 'Movement', title: 'Steps', current: 7000, total: 10000 },
@@ -65,7 +66,6 @@ const CircularProgress = ({ progress, radius = 50, strokeWidth = 10}) => {
                 {getProgressMessage(normalizedProgress)}
             </Text>
         </View>
-
     );
 };
 
@@ -78,12 +78,40 @@ const TasksScreen = () => {
     const [addValue, setAddValue] = useState(0);
 
     useEffect(() => {
-        setTasks(defaultTasks);
+        loadTasks();
     }, []);
+
+    useEffect(() => {
+        saveTasks(tasks);
+    }, [tasks]);
+
+    const loadTasks = async () => {
+        try {
+            const storedTasks = await AsyncStorage.getItem('tasks');
+            if (storedTasks) {
+                setTasks(JSON.parse(storedTasks));
+            } else {
+                setTasks(defaultTasks);
+            }
+        } catch (error) {
+            console.error('Failed to load tasks', error);
+        }
+    };
+
+    const saveTasks = async (tasksToSave) => {
+        try {
+            await AsyncStorage.setItem('tasks', JSON.stringify(tasksToSave));
+        } catch (error) {
+            console.error('Failed to save tasks', error);
+        }
+    };
 
     const totalProgress = tasks.length
         ? tasks.reduce((acc, task) => acc + (task.total > 0 ? task.current / task.total : 0), 0) / tasks.length
         : 0;
+
+    const completedTasksCount = tasks.filter(task => task.current >= task.total).length;
+    const totalTasksCount = tasks.length;
 
     const handleAddTask = () => {
         if (newTask.title && newTask.category) {
@@ -144,7 +172,6 @@ const TasksScreen = () => {
     );
 
     return (
-
         <SafeAreaView style={styles.container}>
             <View style={styles.headerRow}>
                 <Text style={styles.header}>Tasks</Text>
@@ -153,11 +180,13 @@ const TasksScreen = () => {
                 </TouchableOpacity>
             </View>
 
+            <Text style={styles.taskCounter}>
+                Completed: {completedTasksCount} / {totalTasksCount}
+            </Text>
+
             <View style={styles.ringContainer}>
                 <CircularProgress progress={totalProgress} />
             </View>
-
-
 
             <FlatList
                 data={categories}
@@ -203,16 +232,19 @@ const styles = StyleSheet.create({
     progressText: {
         position: 'absolute',
         alignSelf: 'center',
-        //top: '45%',
+        paddingTop: 34,
         fontWeight: 'bold',
-        paddingTop:34,
         fontSize: 32
     },
     headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-    header: { fontSize: 24, fontWeight: 'bold', paddingTop:5, },
+    header: { fontSize: 24, fontWeight: 'bold', paddingTop: 5 },
     input: { backgroundColor: '#fff', padding: 8, marginVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: '#ddd' },
     categoryContainer: { marginBottom: 24 },
-    categoryHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 8,borderBottomWidth: 2, width: '100%', textAlign: 'center', borderColor: '#DDDDDDFF', paddingBottom: 10,},
+    categoryHeader: {
+        fontSize: 20, fontWeight: 'bold', marginBottom: 8,
+        borderBottomWidth: 2, width: '100%', textAlign: 'center',
+        borderColor: '#DDDDDDFF', paddingBottom: 10,
+    },
     taskContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -228,7 +260,8 @@ const styles = StyleSheet.create({
     addButton: { marginLeft: 8 },
     modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
     modalContent: { backgroundColor: '#fff', padding: 20, borderRadius: 10, width: '80%' },
-    modalHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 12 }
+    modalHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 12 },
+    taskCounter: { textAlign: 'center', fontSize: 16, marginBottom: 10 }
 });
-//nigga
+
 export default TasksScreen;
