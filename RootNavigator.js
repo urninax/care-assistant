@@ -14,6 +14,7 @@ import { ThemeContext }    from "./utils/theme-context";
 import { HomeScreen }       from "./screens/home-screen";
 import { CalendarScreen }   from "./screens/calendar-screen";
 import { ProfileScreen }    from "./screens/profile-screen";
+import { GoalScreen }    from "./screens/goal-screen";
 import TasksScreen from "./screens/tasks-screen";
 
 
