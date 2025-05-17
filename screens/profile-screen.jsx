@@ -62,7 +62,14 @@ export const ProfileScreen = () => {
                     source={require('../images/flame.svg')}
                     style={styles.streakIcon}
                   />
-                  <Text style={styles.streakText}>12</Text>
+                  <View style={styles.streakTextContainer}>
+                    <Text 
+                      style={styles.streakText}
+                      numberOfLines={1}               // ограничиваем текст одной строкой
+                      adjustsFontSizeToFit            // разрешаем уменьшать размер шрифта
+                      minimumFontScale={0.5}
+                    >6</Text>
+                  </View>
                 </View>
               </View>
               <View style={styles.streakMotivationalTextContainer}>
@@ -160,12 +167,19 @@ const getStyles = (scheme) =>
       fontFamily: 'Poppins_300Light',
       textAlign: 'center'
     },
-    streakText: {
+    streakTextContainer: {
       position: 'absolute',
+      height: 50,
+      aspectRatio: 1,
+      top: '40%',
+      left: '20%',
+      alignContent: 'center',
+      justifyContent: 'center'
+    },
+    streakText: {
       color: '#fff',
-      fontSize: 30,
-      marginTop: 25,
-      marginRight: 5,
+      fontSize: 25,
       fontWeight: 'bold',
+      textAlign: 'center'
     },
   })
