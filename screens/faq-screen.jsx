@@ -81,5 +81,5 @@ const styles = StyleSheet.create({
     question: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
     answer: { fontSize: 14, color: '#555' },
 });
-
+//
 export default FAQScreen;
