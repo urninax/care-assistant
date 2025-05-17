@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import {
     View, Text, StyleSheet, FlatList, SafeAreaView,
     TextInput, TouchableOpacity, Modal, Button
@@ -23,19 +23,25 @@ const getProgressMessage = (progress) => {
     if (progress === 0) return 'Start right now';
     if (progress < 0.3) return 'Good start';
     if (progress < 0.6) return 'You are doing great!';
-    if (progress < 0.9) return 'Go girl!';
-    if (progress < 1) return 'Almost done';
+    if (progress < 0.9) return 'More than halfway done!';
+    if (progress < 1) return 'Almost done!';
     return 'Good job!';
 };
 
-const CircularProgress = ({ progress, radius = 50, strokeWidth = 10}) => {
+const getProgressColor = (progress) => {
+    if (progress >= 0.8) return 'green';
+    if (progress >= 0.4) return 'orange';
+    return 'red';
+};
+
+const CircularProgress = ({ progress, radius = 50, strokeWidth = 10, color = '#007AFF' }) => {
     const normalizedProgress = Math.min(Math.max(progress, 0), 1);
     const size = radius * 2 + strokeWidth;
     const circumference = 2 * Math.PI * radius;
     const strokeDashoffset = circumference * (1 - normalizedProgress);
 
     return (
-        <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+        <View style={{ alignItems: 'center', justifyContent: 'top' }}>
             <Svg width={size} height={size}>
                 <Circle
                     stroke="#e6e6e6"
@@ -45,11 +51,8 @@ const CircularProgress = ({ progress, radius = 50, strokeWidth = 10}) => {
                     r={radius}
                     strokeWidth={strokeWidth}
                 />
-                <Text style={styles.progressText}>
-                    {`${Math.round(normalizedProgress * 100)}%`}
-                </Text>
                 <Circle
-                    stroke="#007AFF"
+                    stroke={color}
                     fill="none"
                     cx={size / 2}
                     cy={size / 2}
@@ -62,6 +65,9 @@ const CircularProgress = ({ progress, radius = 50, strokeWidth = 10}) => {
                     origin={`${size / 2}, ${size / 2}`}
                 />
             </Svg>
+            <Text style={styles.progressText}>
+                {`${Math.round(normalizedProgress * 100)}%`}
+            </Text>
             <Text style={{ marginTop: 8, fontWeight: '500' }}>
                 {getProgressMessage(normalizedProgress)}
             </Text>
@@ -69,13 +75,16 @@ const CircularProgress = ({ progress, radius = 50, strokeWidth = 10}) => {
     );
 };
 
-const TasksScreen = () => {
+const TasksScreen = ({ navigation }) => {
     const [tasks, setTasks] = useState([]);
     const [newTask, setNewTask] = useState({ title: '', category: '', current: 0, total: 0 });
     const [modalVisible, setModalVisible] = useState(false);
     const [addTaskModalVisible, setAddTaskModalVisible] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [addValue, setAddValue] = useState(0);
+
+    const [taskToDelete, setTaskToDelete] = useState(null);
+    const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
     useEffect(() => {
         loadTasks();
@@ -84,6 +93,16 @@ const TasksScreen = () => {
     useEffect(() => {
         saveTasks(tasks);
     }, [tasks]);
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity onPress={() => setAddTaskModalVisible(true)} style={{ marginRight: 16 }}>
+                    <Ionicons name="add" size={28} color="#007AFF" />
+                </TouchableOpacity>
+            )
+        });
+    }, [navigation]);
 
     const loadTasks = async () => {
         try {
@@ -142,21 +161,45 @@ const TasksScreen = () => {
         setModalVisible(false);
     };
 
+    const openDeleteModal = (task) => {
+        setTaskToDelete(task);
+        setDeleteModalVisible(true);
+    };
+
+    const confirmDeleteTask = () => {
+        if (taskToDelete) {
+            const updatedTasks = tasks.filter(task => task.id !== taskToDelete.id);
+            setTasks(updatedTasks);
+            setTaskToDelete(null);
+            setDeleteModalVisible(false);
+        }
+    };
+
     const renderItem = ({ item }) => {
         const progress = item.current / item.total;
         return (
             <View style={styles.taskContainer}>
-                <View style={{ flex: 1 }}>
-                    <Text style={styles.title}>{item.title}</Text>
-                    <Text>{`${item.current}/${item.total}`}</Text>
-                    <ProgressBar progress={progress} color={progress >= 1 ? 'green' : 'red'} style={styles.progressBar} />
+                <Text style={styles.title}>{item.title}</Text>
+                <Text style={styles.progress}>{`${item.current}/${item.total}`}</Text>
+
+                <View style={styles.buttonRow}>
+                    <TouchableOpacity onPress={() => openAddValueModal(item)} style={styles.addButton}>
+                        <Ionicons name="add-circle" size={24} color="#007AFF" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => openDeleteModal(item)} style={styles.deleteButton}>
+                        <Ionicons name="trash" size={24} color="red" />
+                    </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={() => openAddValueModal(item)} style={styles.addButton}>
-                    <Ionicons name="add-circle" size={28} color="#007AFF" />
-                </TouchableOpacity>
+
+                <ProgressBar
+                    progress={progress}
+                    color={progress >= 1 ? 'green' : 'red'}
+                    style={styles.progressBar}
+                />
             </View>
         );
     };
+
 
     const categories = [...new Set(tasks.map(task => task.category))];
 
@@ -173,19 +216,15 @@ const TasksScreen = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.headerRow}>
-                <Text style={styles.header}>Tasks</Text>
-                <TouchableOpacity onPress={() => setAddTaskModalVisible(true)}>
-                    <Ionicons name="add" size={32} color="#007AFF" />
-                </TouchableOpacity>
-            </View>
-
             <Text style={styles.taskCounter}>
                 Completed: {completedTasksCount} / {totalTasksCount}
             </Text>
 
             <View style={styles.ringContainer}>
-                <CircularProgress progress={totalProgress} />
+                <CircularProgress
+                    progress={totalProgress}
+                    color={getProgressColor(totalProgress)}
+                />
             </View>
 
             <FlatList
@@ -205,6 +244,7 @@ const TasksScreen = () => {
                             onChangeText={(text) => setAddValue(parseInt(text) || 0)}
                         />
                         <Button title="Confirm" onPress={handleConfirmAddValue} />
+                        <Button title="Cancel" color="red" onPress={() => setModalVisible(false)} />
                     </View>
                 </View>
             </Modal>
@@ -222,6 +262,18 @@ const TasksScreen = () => {
                     </View>
                 </View>
             </Modal>
+
+            <Modal visible={deleteModalVisible} transparent animationType="fade">
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text style={{ marginBottom: 20 }}>
+                            Are you sure you want to delete the task "{taskToDelete?.title}"?
+                        </Text>
+                        <Button title="Delete" color="red" onPress={confirmDeleteTask} />
+                        <Button title="Cancel" onPress={() => setDeleteModalVisible(false)} />
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 };
@@ -236,8 +288,6 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 32
     },
-    headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-    header: { fontSize: 24, fontWeight: 'bold', paddingTop: 5 },
     input: { backgroundColor: '#fff', padding: 8, marginVertical: 4, borderRadius: 8, borderWidth: 1, borderColor: '#ddd' },
     categoryContainer: { marginBottom: 24 },
     categoryHeader: {
@@ -245,23 +295,44 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2, width: '100%', textAlign: 'center',
         borderColor: '#DDDDDDFF', paddingBottom: 10,
     },
+    // taskContainer: {
+    //     flexDirection: 'row',
+    //     justifyContent: 'space-between',
+    //     alignItems: 'center',
+    //     marginBottom: 12,
+    //     padding: 12,
+    //     backgroundColor: '#fff',
+    //     borderRadius: 8,
+    //     elevation: 2
+    // },
+    title: { fontSize: 18, fontWeight: '500', },
+    // progressBar: { height: 15, borderRadius: 5, marginTop: 4 },
+    addButton: { marginLeft: 8 },
+    deleteButton: { marginLeft: 12 },
+    modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
+    modalContent: { backgroundColor: '#fff', padding: 20, borderRadius: 10, width: '80%' },
+    modalHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 12 },
+    taskCounter: { textAlign: 'center', fontSize: 16, marginBottom: 10 },
     taskContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
         marginBottom: 12,
         padding: 12,
         backgroundColor: '#fff',
         borderRadius: 8,
-        elevation: 2
+        elevation: 2,
+        },
+    buttonRow: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginBottom: 8,
     },
-    title: { fontSize: 18, fontWeight: '500' },
-    progressBar: { height: 10, borderRadius: 5, marginTop: 4 },
-    addButton: { marginLeft: 8 },
-    modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
-    modalContent: { backgroundColor: '#fff', padding: 20, borderRadius: 10, width: '80%' },
-    modalHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 12 },
-    taskCounter: { textAlign: 'center', fontSize: 16, marginBottom: 10 }
+    progressBar: {
+        height: 15,
+        borderRadius: 5,
+        width: '100%',
+    },
+    progress: {
+        marginBottom:-25
+    }
 });
 
 export default TasksScreen;
