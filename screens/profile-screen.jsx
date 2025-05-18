@@ -1,4 +1,4 @@
-import { Text, View, StyleSheet, TouchableOpacity, Platform } from "react-native"
+import { Text, View, StyleSheet, TouchableOpacity, Platform, Button } from "react-native"
 import { useContext, useState } from "react";
 import { useFonts, Poppins_300Light, Poppins_500Medium, Poppins_700Bold } from "@expo-google-fonts/poppins";
 import { ThemeContext } from "../utils/theme-context";
@@ -15,15 +15,14 @@ import { PageButton } from "../components/profile-screen/page-button";
 export const ProfileScreen = () => {
     // const tabBarHeight = useBottomTabBarHeight();
 
-    const { scheme, setScheme } = useContext(ThemeContext);
-    const styles = getStyles(scheme)
+    const { scheme, theme, setScheme } = useContext(ThemeContext);
+    const styles = getStyles(scheme, theme)
 
     const [fontsLoaded] = useFonts({
       Poppins_700Bold,
       Poppins_500Medium,
       Poppins_300Light
     });
-    const [imageUri, setImageUri] = useState(null);
     
     if (!fontsLoaded) {
       return;
@@ -39,7 +38,6 @@ export const ProfileScreen = () => {
             contentInsetAdjustmentBehavior="automatic">
             <View style={styles.profilePictureContainer}>
               <ProfileAvatar
-                imageUri={imageUri}
                 containerStyle={styles.profilePictureInnerContainer}
                 imageStyle={styles.profilePicture}
               />
@@ -65,8 +63,8 @@ export const ProfileScreen = () => {
                   <View style={styles.streakTextContainer}>
                     <Text 
                       style={styles.streakText}
-                      numberOfLines={1}               // ограничиваем текст одной строкой
-                      adjustsFontSizeToFit            // разрешаем уменьшать размер шрифта
+                      numberOfLines={1}
+                      adjustsFontSizeToFit
                       minimumFontScale={0.5}
                     >6</Text>
                   </View>
@@ -87,7 +85,7 @@ export const ProfileScreen = () => {
     );
 }
 
-const getStyles = (scheme) =>
+const getStyles = (scheme, theme) =>
   StyleSheet.create({
     screen: {
       flex: 1,
@@ -120,7 +118,8 @@ const getStyles = (scheme) =>
     },
     username: {
       fontSize: 20,
-      fontFamily: 'Poppins_700Bold'
+      fontFamily: 'Poppins_700Bold',
+      color: theme.colors.text
     },
     buttonsContainer: {
       flexDirection: 'column',
@@ -128,11 +127,11 @@ const getStyles = (scheme) =>
     },
     streakContainer: {
       borderWidth: 1,
-      borderColor: 'gray',
+      borderColor: theme.colors.border,
       borderRadius: 20,
       paddingVertical: 20,
       marginTop: 5,
-      backgroundColor: '#fff'
+      backgroundColor: theme.colors.view
     },
     streakHeaderContainer: {
       justifyContent: 'center',
@@ -140,7 +139,8 @@ const getStyles = (scheme) =>
     },
     streakHeaderText: {
       fontSize: 20,
-      fontFamily: 'Poppins_700Bold'
+      fontFamily: 'Poppins_700Bold',
+      color: theme.colors.text
     },
     streakIconContainer: {
       height: 130,
@@ -165,7 +165,8 @@ const getStyles = (scheme) =>
     streakMotivationalText: {
       fontSize: 15,
       fontFamily: 'Poppins_300Light',
-      textAlign: 'center'
+      textAlign: 'center',
+      color: theme.colors.text
     },
     streakTextContainer: {
       position: 'absolute',
@@ -177,7 +178,8 @@ const getStyles = (scheme) =>
       justifyContent: 'center'
     },
     streakText: {
-      color: '#fff',
+      // color: '#fff',
+      color: '#E1E1E1',
       fontSize: 25,
       fontWeight: 'bold',
       textAlign: 'center'

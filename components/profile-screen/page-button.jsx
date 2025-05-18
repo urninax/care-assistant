@@ -5,9 +5,9 @@ import { useContext } from 'react';
 import { ThemeContext } from '../../utils/theme-context';
 
 export const PageButton = ({iconName, buttonText}) => {
-    const { schema } = useContext(ThemeContext)
+    const { schema, theme } = useContext(ThemeContext)
     
-    const styles = getStyles(schema)
+    const styles = getStyles(schema, theme)
 
     const [fontsLoaded] = useFonts({
         Poppins_500Medium,
@@ -27,17 +27,17 @@ export const PageButton = ({iconName, buttonText}) => {
     )
 }
 
-const getStyles = (scheme) => 
+const getStyles = (scheme, theme) => 
     StyleSheet.create({
         button: {
             borderWidth: 1,
-            borderColor: "gray",
+            borderColor: theme.colors.border,
             borderRadius: 20,
             height: 85,
             flexDirection: 'row',
             alignItems: 'center',
             marginVertical: 8,
-            backgroundColor: '#fff'
+            backgroundColor: theme.colors.view
         },
         buttonIconContainer: {
             height: '100%',
@@ -49,20 +49,23 @@ const getStyles = (scheme) =>
             justifyContent: 'center',
             alignItems: 'center',
             aspectRatio: 1,
-            fontSize: 33
+            fontSize: 33,
+            color: theme.colors.text
         },
         buttonText: {
             fontSize: 18,
-            fontFamily: 'Poppins_500Medium'
+            fontFamily: 'Poppins_500Medium',
+            color: theme.colors.text
         },
         shadow: {
-            shadowColor: scheme === "dark" ? "#fff" : "#000",
+            shadowColor: "#000",
+            // shadowColor: theme.colors.shadow,
             ...Platform.select({
               ios:{
-                shadowOpacity: 0.2,
+                shadowOpacity: 0.5,
                 shadowOffset: {
-                  width: 1,
-                  height: 1
+                  width: 0,
+                  height: 0
                 },
                 shadowRadius: 7,
               },

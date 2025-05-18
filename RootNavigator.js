@@ -1,13 +1,10 @@
 // RootNavigator.js
 import React, { useContext, useMemo, useEffect } from "react";
-import {
-  NavigationContainer,
-  DefaultTheme,
-  DarkTheme,
-} from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Ionicons from "react-native-vector-icons/Ionicons";
+// import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Ionicons } from '@expo/vector-icons' 
 import { TouchableOpacity } from "react-native";
 import { StatusBar } from "react-native";
 
@@ -19,19 +16,20 @@ import { GoalScreen } from "./screens/goal-screen";
 
 Ionicons.loadFont()
 
-const Stack = createNativeStackNavigator();
+
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function HomeStack() {
-  const { scheme } = useContext(ThemeContext);
+  const { scheme, theme } = useContext(ThemeContext);
 
   return (
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: scheme === "dark" ? "#1c1c1e" : "#FFF",
+          backgroundColor: theme.colors.tabBar
         },
-        headerTintColor: scheme === "dark" ? "#fff" : "#1c1c1e",
+        headerTintColor: theme.colors.headerTint,
         // headerTitleStyle: {
         //   fontSize: 30,
         //   fontWeight: "bold",
@@ -43,10 +41,10 @@ function HomeStack() {
         component={HomeScreen}
         options={({ navigation }) => ({
           headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+            <TouchableOpacity style={{paddingRight: 15}} onPress={() => navigation.navigate("Profile")}>
               <Ionicons
                 name="person-outline"
-                size={25}
+                size={27}
                 color={scheme === "dark" ? "#FFF" : "#2C2C2E"}
               />
             </TouchableOpacity>
@@ -59,39 +57,24 @@ function HomeStack() {
 }
 
 export default function RootNavigator() {
-  const { scheme } = useContext(ThemeContext);
-
-  const navTheme = useMemo(() => {
-    return scheme === "dark" ? DarkTheme : DefaultTheme;
-  }, [scheme]);
+  const { scheme, theme } = useContext(ThemeContext);
 
   return (
     <>
       <StatusBar 
         barStyle={scheme === 'dark' ? "light-content" : "dark-content"}
-        backgroundColor={scheme === "dark" ? "#1c1c1e" : "#fff"}
+        backgroundColor={theme.colors.statusBar}
       />
-      <NavigationContainer theme={navTheme}>
+      <NavigationContainer theme={theme}>
         <Tab.Navigator
           screenOptions={{
-            tabBarActiveTintColor: scheme === "dark" ? "#0A84FF" : "black",
-            tabBarInactiveTintColor: scheme === "dark" ? "#8E8E93" : "gray",
+            tabBarActiveTintColor: theme.colors.activeTab,
+            tabBarInactiveTintColor: theme.colors.inactiveTab,
             tabBarIconStyle: { width: 28, height: 28 },
 
-            //   tabBarActiveBackgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
-            //   tabBarInactiveBackgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
             tabBarStyle: {
-              backgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
+              backgroundColor: theme.colors.tabBar,
             },
-
-            headerStyle: {
-              backgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
-            },
-            headerTintColor: scheme === "dark" ? "#fff" : "#red",
-            // headerTitleStyle: {
-            //   fontSize: 30,
-            //   fontWeight: "bold", // optional
-            // },
           }}
         >
           <Tab.Screen
@@ -106,6 +89,15 @@ export default function RootNavigator() {
                   color={color}
                 />
               ),
+              // headerRight: () => (
+              //   <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+              //     <Ionicons
+              //       name="person-outline"
+              //       size={25}
+              //       color={scheme === "dark" ? "#FFF" : "#2C2C2E"}
+              //     />
+              //   </TouchableOpacity>
+              // ),
               headerShown: false,
             }}
           />
