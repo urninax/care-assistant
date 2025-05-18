@@ -1,42 +1,42 @@
 // RootNavigator.js
-import React, { useContext, useMemo } from "react";
-import {
-  NavigationContainer,
-  DefaultTheme,
-  DarkTheme,
-} from "@react-navigation/native";
+import React, { useContext, useMemo, useEffect } from "react";
+import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Ionicons from "react-native-vector-icons/Ionicons";
+// import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createStackNavigator } from "@react-navigation/stack";
+import { Ionicons } from '@expo/vector-icons' 
 import { TouchableOpacity } from "react-native";
+import { StatusBar } from "react-native";
 
-import { ThemeContext }    from "./utils/theme-context";
-import { HomeScreen }       from "./screens/home-screen";
-import { CalendarScreen }   from "./screens/calendar-screen";
-import { ProfileScreen }    from "./screens/profile-screen";
-import { GoalScreen }    from "./screens/goal-screen";
+import { ThemeContext } from "./utils/theme-context";
+import { HomeScreen } from "./screens/home-screen";
+import { CalendarScreen } from "./screens/calendar-screen";
+import { ProfileScreen } from "./screens/profile-screen";
+import { GoalScreen } from "./screens/goal-screen";
 import TasksScreen from "./screens/tasks-screen";
 import { SettingsScreen } from "./screens/settings-screen";
 import { TipsExercisesScreen } from "./screens/tips-exercises-screen";
 
+Ionicons.loadFont()
 
-const Stack = createNativeStackNavigator();
+
+const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 function HomeStack() {
-  const { scheme } = useContext(ThemeContext);
+  const { scheme, theme } = useContext(ThemeContext);
 
   return (
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: scheme === "dark" ? "#1c1c1e" : "#FFF",
+          backgroundColor: theme.colors.tabBar
         },
-        headerTintColor: scheme === "dark" ? "#fff" : "#1c1c1e",
-        headerTitleStyle: {
-          fontSize: 30,
-          fontWeight: "bold",
-        },
+        headerTintColor: theme.colors.headerTint,
+        // headerTitleStyle: {
+        //   fontSize: 30,
+        //   fontWeight: "bold",
+        // },
       }}
     >
       <Stack.Screen
@@ -44,7 +44,7 @@ function HomeStack() {
         component={HomeScreen}
         options={({ navigation }) => ({
           headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+            <TouchableOpacity style={{paddingRight: 15}} onPress={() => navigation.navigate("Profile")}>
               <Ionicons
                 name="person-outline"
                 size={27}
@@ -60,118 +60,116 @@ function HomeStack() {
 }
 
 export default function RootNavigator() {
-  const { scheme } = useContext(ThemeContext);
-
-  const navTheme = useMemo(() => {
-    console.log("Theme changed to", scheme);
-    return scheme === "dark" ? DarkTheme : DefaultTheme;
-  }, [scheme]);
+  const { scheme, theme } = useContext(ThemeContext);
 
   return (
-    <NavigationContainer theme={navTheme}>
-      <Tab.Navigator
-        screenOptions={{
-          tabBarActiveTintColor: scheme === "dark" ? "#0A84FF" : "black",
-          tabBarInactiveTintColor: scheme === "dark" ? "#8E8E93" : "gray",
-          tabBarIconStyle: { width: 28, height: 28 },
-
-          //   tabBarActiveBackgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
-          //   tabBarInactiveBackgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
-          tabBarStyle: {
-            backgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
-          },
-
-          headerStyle: {
-            backgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
-          },
-          headerTintColor: scheme === "dark" ? "#fff" : "#red",
-          headerTitleStyle: {
-            fontSize: 30,
-            fontWeight: "bold", // optional
-          },
-        }}
-      >
-        <Tab.Screen
-          name="HomeStack"
-          component={HomeStack}
-          options={{
-            tabBarLabel: "Home",
-            tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons
-                name={focused ? "home" : "home-outline"}
-                size={size}
-                color={color}
-              />
-            ),
-            headerShown: false,
+    <>
+      <StatusBar 
+        barStyle={scheme === 'dark' ? "light-content" : "dark-content"}
+        backgroundColor={theme.colors.statusBar}
+      />
+      <NavigationContainer theme={theme}>
+        <Tab.Navigator
+          screenOptions={{
+            tabBarActiveTintColor: theme.colors.activeTab,
+            tabBarInactiveTintColor: theme.colors.inactiveTab,
+            tabBarIconStyle: { width: 28, height: 28 },
+            tabBarStyle: {
+              backgroundColor: theme.colors.tabBar,
+            },
           }}
-        />
-        <Tab.Screen
-          name="Goals"
-          component={GoalScreen}
-          options={{
-            tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons
-                name={focused ? "stats-chart" : "stats-chart-outline"}
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Calendar"
-          component={CalendarScreen}
-          options={{
-            tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons
-                name={focused ? "calendar" : "calendar-outline"}
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Tips"
-          component={TipsExercisesScreen}
-          options={{
-            tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons
-                name={focused ? "library" : "library-outline"}
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name={"Tasks"}
-          component={TasksScreen}
-          options={{
-            tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons 
-                name={focused ? "checkmark-done" : "checkmark-done-outline"} 
-                size={size} 
-                color={color} 
-              />
-            ),
-          }}
-        />
-        <Tab.Screen
-          name="Settings"
-          component={SettingsScreen}
-          options={{
-            tabBarIcon: ({ focused, color, size }) => (
-              <Ionicons
-                name={focused ? "settings" : "settings-outline"}
-                size={size}
-                color={color}
-              />
-            ),
-          }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+        >
+          <Tab.Screen
+            name="HomeStack"
+            component={HomeStack}
+            options={{
+              tabBarLabel: "Home",
+              tabBarIcon: ({ focused, color, size }) => (
+                <Ionicons
+                  name={focused ? "home" : "home-outline"}
+                  size={size}
+                  color={color}
+                />
+              ),
+              // headerRight: () => (
+              //   <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+              //     <Ionicons
+              //       name="person-outline"
+              //       size={25}
+              //       color={scheme === "dark" ? "#FFF" : "#2C2C2E"}
+              //     />
+              //   </TouchableOpacity>
+              // ),
+              headerShown: false,
+            }}
+          />
+          <Tab.Screen
+            name="Goals"
+            component={GoalScreen}
+            options={{
+              tabBarIcon: ({ focused, color, size }) => (
+                <Ionicons
+                  name={focused ? "stats-chart" : "stats-chart-outline"}
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
+          <Tab.Screen
+              name="Calendar"
+              component={CalendarScreen}
+              options={{
+                tabBarIcon: ({ focused, color, size }) => (
+                  <Ionicons
+                    name={focused ? "calendar" : "calendar-outline"}
+                    size={size}
+                    color={color}
+                  />
+                ),
+              }}
+           />
+          <Tab.Screen
+            name="Tips"
+            component={TipsExercisesScreen}
+            options={{
+              tabBarIcon: ({ focused, color, size }) => (
+                <Ionicons
+                  name={focused ? "library" : "library-outline"}
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name={"Tasks"}
+            component={TasksScreen}
+            options={{
+              tabBarIcon: ({ focused, color, size }) => (
+                <Ionicons 
+                  name={focused ? "checkmark-done" : "checkmark-done-outline"} 
+                  size={size} 
+                  color={color} 
+                />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="Settings"
+            component={SettingsScreen}
+            options={{
+              tabBarIcon: ({ focused, color, size }) => (
+                <Ionicons
+                  name={focused ? "settings" : "settings-outline"}
+                  size={size}
+                  color={color}
+                />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </>
   );
 }
