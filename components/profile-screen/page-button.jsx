@@ -3,9 +3,11 @@ import { TouchableOpacity, View, StyleSheet, Platform, Text } from 'react-native
 import { useFonts, Poppins_500Medium } from '@expo-google-fonts/poppins';
 import { useContext } from 'react';
 import { ThemeContext } from '../../utils/theme-context';
+import { useNavigation } from '@react-navigation/native';
 
-export const PageButton = ({iconName, buttonText}) => {
+export const PageButton = ({iconName, buttonText, navigateTo}) => {
     const { schema, theme } = useContext(ThemeContext)
+    const navigation = useNavigation();
     
     const styles = getStyles(schema, theme)
 
@@ -17,8 +19,12 @@ export const PageButton = ({iconName, buttonText}) => {
         return;
     }
 
+    const onPress = () => {
+        navigation.navigate(navigateTo)
+    }
+
     return (
-        <TouchableOpacity style={[styles.button, styles.shadow]}>
+        <TouchableOpacity onPress={onPress} style={[styles.button, styles.shadow]}>
             <View style={styles.buttonIconContainer}>
                 <Ionicons name={iconName} style={styles.buttonIcon}></Ionicons>
             </View>
@@ -59,7 +65,6 @@ const getStyles = (scheme, theme) =>
         },
         shadow: {
             shadowColor: "#000",
-            // shadowColor: theme.colors.shadow,
             ...Platform.select({
               ios:{
                 shadowOpacity: 0.5,

@@ -16,6 +16,7 @@ import { GoalScreen } from "./screens/goal-screen";
 import TasksScreen from "./screens/tasks-screen";
 import { SettingsScreen } from "./screens/settings-screen";
 import { TipsExercisesScreen } from "./screens/tips-exercises-screen";
+import FAQScreen from "./screens/faq-screen";
 
 Ionicons.loadFont()
 
@@ -33,10 +34,6 @@ function HomeStack() {
           backgroundColor: theme.colors.tabBar
         },
         headerTintColor: theme.colors.headerTint,
-        // headerTitleStyle: {
-        //   fontSize: 30,
-        //   fontWeight: "bold",
-        // },
       }}
     >
       <Stack.Screen
@@ -55,6 +52,8 @@ function HomeStack() {
         })}
       />
       <Stack.Screen name="Profile" component={ProfileScreen} />
+      <Stack.Screen name="FAQ" component={FAQScreen} />
+      <Stack.Screen name="Settings" component={SettingsScreen} />
     </Stack.Navigator>
   );
 }
@@ -91,16 +90,20 @@ export default function RootNavigator() {
                   color={color}
                 />
               ),
-              // headerRight: () => (
-              //   <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
-              //     <Ionicons
-              //       name="person-outline"
-              //       size={25}
-              //       color={scheme === "dark" ? "#FFF" : "#2C2C2E"}
-              //     />
-              //   </TouchableOpacity>
-              // ),
               headerShown: false,
+            }}
+          />
+          <Tab.Screen
+            name={"Tasks"}
+            component={TasksScreen}
+            options={{
+              tabBarIcon: ({ focused, color, size }) => (
+                <Ionicons 
+                  name={focused ? "checkmark-done" : "checkmark-done-outline"} 
+                  size={size} 
+                  color={color} 
+                />
+              ),
             }}
           />
           <Tab.Screen
@@ -136,32 +139,6 @@ export default function RootNavigator() {
               tabBarIcon: ({ focused, color, size }) => (
                 <Ionicons
                   name={focused ? "library" : "library-outline"}
-                  size={size}
-                  color={color}
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name={"Tasks"}
-            component={TasksScreen}
-            options={{
-              tabBarIcon: ({ focused, color, size }) => (
-                <Ionicons 
-                  name={focused ? "checkmark-done" : "checkmark-done-outline"} 
-                  size={size} 
-                  color={color} 
-                />
-              ),
-            }}
-          />
-          <Tab.Screen
-            name="Settings"
-            component={SettingsScreen}
-            options={{
-              tabBarIcon: ({ focused, color, size }) => (
-                <Ionicons
-                  name={focused ? "settings" : "settings-outline"}
                   size={size}
                   color={color}
                 />

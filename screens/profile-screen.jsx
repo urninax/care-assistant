@@ -1,10 +1,9 @@
-import { Text, View, StyleSheet, TouchableOpacity, Platform, Button } from "react-native"
+import { Text, View, StyleSheet } from "react-native"
 import { useContext, useState } from "react";
 import { useFonts, Poppins_300Light, Poppins_500Medium, Poppins_700Bold } from "@expo-google-fonts/poppins";
 import { ThemeContext } from "../utils/theme-context";
 import { ScrollView } from "react-native";
 import { Image } from 'expo-image'
-import { Ionicons } from '@expo/vector-icons';
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
@@ -46,9 +45,9 @@ export const ProfileScreen = () => {
               <Text style={styles.username}>urninax</Text>
             </View>
             <View style={styles.buttonsContainer}>
-              <PageButton iconName='settings-outline' buttonText='Settings' />
-              <PageButton iconName='notifications-outline' buttonText='Activity' />
-              <PageButton iconName='chatbubbles-outline' buttonText='FAQ' />
+              <PageButton iconName='settings-outline' buttonText='Settings' navigateTo='Settings'/>
+              <PageButton iconName='notifications-outline' buttonText='Activity'/>
+              <PageButton iconName='chatbubbles-outline' buttonText='FAQ' navigateTo='FAQ'/>
             </View>
             <View style={styles.streakContainer}>
               <View style={styles.streakHeaderContainer}>
@@ -74,11 +73,6 @@ export const ProfileScreen = () => {
                 <Text style={styles.streakMotivationalText}>{`Do your tasks to keep your streak going!`}</Text>
               </View>
             </View>
-
-            {/* <Text>Current Theme: {scheme}</Text>
-            <Button title="System" onPress={() => setScheme('system')} />
-            <Button title="Light"    onPress={() => setScheme('light')} />
-            <Button title="Dark"      onPress={() => setScheme('dark')} /> */}
           </ScrollView>
         </SafeAreaView>
       </SafeAreaProvider>
@@ -114,7 +108,6 @@ const getStyles = (scheme, theme) =>
     usernameContainer: {
       justifyContent: 'center',
       alignItems: 'center',
-      // marginTop: 15
     },
     username: {
       fontSize: 20,
@@ -178,7 +171,6 @@ const getStyles = (scheme, theme) =>
       justifyContent: 'center'
     },
     streakText: {
-      // color: '#fff',
       color: '#E1E1E1',
       fontSize: 25,
       fontWeight: 'bold',

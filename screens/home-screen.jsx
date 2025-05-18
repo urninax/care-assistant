@@ -165,7 +165,6 @@ const getStyles = (scheme, theme) =>
       justifyContent: 'center',
       gap: 30,
       alignItems: 'center',
-      // borderWidth: 1,
       borderColor: 'lightgray',
       marginTop: 10,
       marginBottom: 10,
@@ -174,7 +173,6 @@ const getStyles = (scheme, theme) =>
       height: '100%',
       width: '45%',
       padding: 8,
-      // borderWidth: 1,
       borderColor: 'lightgray',
       borderRadius: 10,
       backgroundColor: '#ededed',
@@ -203,7 +201,6 @@ const getStyles = (scheme, theme) =>
       alignItems: 'center'
     },
     label: {
-      // fontWeight: 'bold',
       fontFamily: 'Poppins_400Regular',
       fontSize: 18,
     },

@@ -5,9 +5,6 @@ export const lightTheme = {
     colors: {
         ...DefaultTheme.colors,
         background: '#F2F2F2',
-        // card:       ' #ffffff',
-        // text:       ' #121212',
-        // primary:    ' #6200EE',
         border:     '#d3d3d3',
         view:       '#FFFFFF',
         shadow:     '#000000',
@@ -24,9 +21,6 @@ export const lightTheme = {
     colors: {
         ...DarkTheme.colors,
         background: '#121212',
-    //   text:       ' #E1E1E1',
-    //   card:       ' #1c1c1e',
-    //   primary:    ' #BB86FC',
         border:     '#1C1C1E',
         view:       '#1C1C1E',
         shadow:     '#FFFFFF',
