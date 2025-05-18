@@ -16,6 +16,8 @@ import { CalendarScreen }   from "./screens/calendar-screen";
 import { ProfileScreen }    from "./screens/profile-screen";
 import { GoalScreen }    from "./screens/goal-screen";
 import TasksScreen from "./screens/tasks-screen";
+import { SettingsScreen } from "./screens/settings-screen";
+import { TipsExercisesScreen } from "./screens/tips-exercises-screen";
 
 
 const Stack = createNativeStackNavigator();
@@ -130,14 +132,45 @@ export default function RootNavigator() {
             ),
           }}
         />
-          <Tab.Screen
-              name={"Tasks"}
-              component={TasksScreen}
-              options={{
-                  tabBarIcon: ({ focused, color, size }) => (
-                      <Ionicons name={focused ? "checkmark-done" : "checkmark-done-outline"} size={size} color={color} />
-                  ),
-              }}/>
+        <Tab.Screen
+          name="Tips"
+          component={TipsExercisesScreen}
+          options={{
+            tabBarIcon: ({ focused, color, size }) => (
+              <Ionicons
+                name={focused ? "library" : "library-outline"}
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name={"Tasks"}
+          component={TasksScreen}
+          options={{
+            tabBarIcon: ({ focused, color, size }) => (
+              <Ionicons 
+                name={focused ? "checkmark-done" : "checkmark-done-outline"} 
+                size={size} 
+                color={color} 
+              />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Settings"
+          component={SettingsScreen}
+          options={{
+            tabBarIcon: ({ focused, color, size }) => (
+              <Ionicons
+                name={focused ? "settings" : "settings-outline"}
+                size={size}
+                color={color}
+              />
+            ),
+          }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
