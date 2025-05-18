@@ -4,15 +4,16 @@ import { ProgressBar } from '../components/home-screen/progress-bar'
 import { useFonts, Poppins_400Regular, Poppins_300Light } from '@expo-google-fonts/poppins';
 import { TaskWidget } from "../components/home-screen/task-widget";
 import { SharedContext } from "../utils/shared-context";
-import { useContext, useState, useRef  } from "react";
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { useContext, useRef} from "react";
+import { Ionicons } from '@expo/vector-icons';
 import { ThemeContext } from "../utils/theme-context";
 
 export const HomeScreen = () => {
-  const {treeName, setTreeName} = useContext(SharedContext);
-  const { scheme } = useContext(ThemeContext);
 
-  const styles = getStyles(scheme);
+  const { treeName, setTreeName } = useContext(SharedContext);
+  const { scheme, theme } = useContext(ThemeContext);
+
+  const styles = getStyles(scheme, theme);
 
   const treeNameInputRef = useRef(null)
 
@@ -48,7 +49,7 @@ export const HomeScreen = () => {
                 ref={treeNameInputRef}
                 style={[styles.treeNameInput, styles.textColor, Platform.OS === 'android' && { paddingVertical: 0, includeFontPadding: false }, {fontFamily: 'Poppins_300Light'}]}
                 placeholder="Name your tree"
-                placeholderTextColor={scheme === "dark" ? "gray" : 'lightgray'}
+                placeholderTextColor={theme.dark ? "gray" : 'lightgray'}
                 returnKeyType="done"
                 value={treeName}
                 onChangeText={setTreeName}
@@ -61,8 +62,9 @@ export const HomeScreen = () => {
         </View>
         <View style={styles.treeContainer}>
           <Image
-            source={require('../images/tree-without-background.gif')}
+            source={require('../images/tree-pink-stage1-1.5-0.65-1.4-cropped.gif')}
             style={styles.gif}
+            contentFit="contain"
           />
         </View>
         <View style={styles.motivationalTextContainer}>
@@ -81,18 +83,18 @@ export const HomeScreen = () => {
   );
 };
 
-const getStyles = (scheme) =>
+const getStyles = (scheme, theme) =>
   StyleSheet.create({
     screen: {
       flex: 1,
       alignItems: "center",
-      backgroundColor: scheme == 'dark' ? '#121212' : '#fff'
+      backgroundColor: theme.colors.background
     },
     treeNameContainer: {
       flexDirection: 'row',
       width: '100%',
       height: '5%',
-      marginTop: 10,
+      marginTop: 15,
       alignItems: 'center',
       justifyContent: 'center',
     },
@@ -105,9 +107,9 @@ const getStyles = (scheme) =>
       width: '100%',
       height: '100%',
       borderWidth: 1,
-      borderColor: scheme === 'dark' ? "#1c1c1e" : "lightgray",
+      borderColor: theme.colors.border,
       borderRadius: 8,
-      backgroundColor: scheme === 'dark' ? '#1c1c1e' : 'white',
+      backgroundColor: theme.colors.view,
       alignItems: 'center',
       justifyContent: 'center'
     },
@@ -118,22 +120,21 @@ const getStyles = (scheme) =>
       height: '100%',
       aspectRatio: 1,
       borderWidth: 1,
-      borderColor: scheme === 'dark' ? "#1c1c1e" : "lightgray",
+      borderColor: theme.colors.border,
       borderRadius: 8,
-      backgroundColor: scheme === 'dark' ? '#1c1c1e' : 'white',
+      backgroundColor: theme.colors.view,
       alignItems: 'center',
       justifyContent: 'center',
     },
     treeNameInput: {
-      fontSize: 25,
+      fontSize: 20,
       width: '100%',
       textAlign: 'center',
     },
     treeContainer: {
-      marginTop: 15,
-      height: '65%',
+      marginTop: 'auto',
+      height: '60%',
       width: '90%',
-      // borderWidth: 1,
       borderColor: 'lightgray',
     },
     gif: {
@@ -141,7 +142,7 @@ const getStyles = (scheme) =>
       width: '100%'
     },
     motivationalTextContainer: {
-      marginTop: 5,
+      marginTop: 10,
       width: '90%',
       borderColor: 'lightgray',
     },
@@ -189,11 +190,11 @@ const getStyles = (scheme) =>
       height: '11%',
       width: '90%',
       borderWidth: 1,
-      borderColor: scheme === 'dark' ? "#1c1c1e" : "lightgray",
+      borderColor: theme.colors.border,
       borderRadius: 10,
       marginTop: 'auto',
-      marginBottom: 30,
-      backgroundColor: scheme === 'dark' ? '#1c1c1e' : 'white',
+      marginBottom: 'auto',
+      backgroundColor: theme.colors.view,
       paddingHorizontal: 15,
       justifyContent:'center',
     },  
@@ -207,15 +208,15 @@ const getStyles = (scheme) =>
       fontSize: 18,
     },
     shadow: {
-      shadowColor: scheme === "dark" ? "#fff" : "#000",
+      shadowColor: '#000',
       ...Platform.select({
         ios:{
-          shadowOpacity: 0.2,
-          shadowOffset: {
-            width: 1,
-            height: 1
-          },
+          shadowOpacity: 0.5,
           shadowRadius: 7,
+          shadowOffset: {
+            height: 0,
+            width: 0
+          }
         },
         android:{
           elevation: 5
@@ -223,6 +224,6 @@ const getStyles = (scheme) =>
       })
     },
     textColor: {
-      color: scheme === "dark" ? "#fff" : "#000"
+      color: theme.colors.text
     }
   });

@@ -1,41 +1,13 @@
-// import React, { createContext, useState, useEffect } from 'react';
-// import { useColorScheme } from 'react-native';
-
-// export const ThemeContext = createContext({
-//   scheme: 'light',
-//   toggleScheme: () => {}
-// });
-
-// export function ThemeProvider({ children }) {
-//     const systemScheme = useColorScheme() || 'light';
-
-//   useEffect(() => {
-//     const sub = Appearance.addChangeListener(({ colorScheme }) => {
-//       setScheme(colorScheme);
-//       console.log("Theme changed to", colorScheme)
-//     });
-//     return () => sub.remove();
-//   }, []);
-
-//   const toggleScheme = () => {
-//     setScheme(prev => (prev === 'light' ? 'dark' : 'light'));
-//   };
-
-//   return (
-//     <ThemeContext.Provider value={{ scheme, toggleScheme }}>
-//       {children}
-//     </ThemeContext.Provider>
-//   );
-// }
-
 import React, { createContext, useState, useEffect, useMemo } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { lightTheme, darkTheme } from './theme';
 
 const STORAGE_KEY = 'APP_THEME_PREFERENCE';
 
 export const ThemeContext = createContext({
   scheme: 'light',
+  theme: lightTheme,
   setScheme: () => {},
 });
 
@@ -62,9 +34,15 @@ export function ThemeProvider({ children }) {
     }
   }, [preference]);
 
+  const theme = useMemo(
+    () => (scheme == 'dark' ? darkTheme : lightTheme),
+    [scheme]
+  );
+
   const contextValue = useMemo(
     () => ({
       scheme,
+      theme,
       setScheme: setPreference,
     }),
     [scheme]
