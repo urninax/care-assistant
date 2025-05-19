@@ -1,6 +1,6 @@
 import React, { useContext, useMemo } from 'react';
-import { Text, StyleSheet, View, ScrollView } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Text, StyleSheet, View, ScrollView, Platform } from 'react-native';
+import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import { ThemeContext } from '../../utils/theme-context';
 
 const items = [
@@ -22,8 +22,8 @@ const items = [
 ];
 
 export const SelfCareTips = () => {
-    const { scheme } = useContext(ThemeContext);
-    const styles = getStyles(scheme);
+    const { theme } = useContext(ThemeContext);
+    const styles = getStyles(theme);
 
     const randomIndices = useMemo(() => {
         const pool = Array.from({ length: items.length }, (_, i) => i);
@@ -32,55 +32,68 @@ export const SelfCareTips = () => {
     }, []);
 
     return (
-        <SafeAreaView style={styles.container}>
-            <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-                {randomIndices.map((idx) => {
-                    const [title, description] = items[idx];
-                    return (
-                        <View key={title} style={styles.card}>
-                            <Text style={styles.title}>{title}</Text>
-                            <Text style={styles.description}>{description}</Text>
-                        </View>
-                    );
-                })}
-            </ScrollView>
-        </SafeAreaView>
+        <SafeAreaProvider>
+            <SafeAreaView style={styles.container}>
+                <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+                    {randomIndices.map((idx) => {
+                        const [title, description] = items[idx];
+                        return (
+                            <View key={title} style={[styles.card, styles.shadow]}>
+                                <Text style={styles.title}>{title}</Text>
+                                <Text style={styles.description}>{description}</Text>
+                            </View>
+                        );
+                    })}
+                </ScrollView>
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 };
 
-const getStyles = (scheme) => {
-    const isDark = scheme === 'dark';
+const getStyles = (theme) => {
     return StyleSheet.create({
         container: {
             flex: 1,
-            backgroundColor: isDark ? '#0d0d0d' : '#fafafa',
         },
         content: {
             padding: 16,
+            flexGrow: 1
         },
         card: {
-            backgroundColor: isDark ? '#1f1f1f' : '#ffffff',
+            backgroundColor: theme.colors.view,
             borderRadius: 16,
             padding: 20,
             marginBottom: 16,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 8,
-            elevation: 4,
         },
         title: {
             fontSize: 20,
-            fontWeight: '700',
-            color: isDark ? '#ffffff' : '#000000',
+            fontFamily: 'Poppins_700Bold',
+            color: theme.colors.text,
             marginBottom: 8,
             textAlign: 'center',
         },
         description: {
             fontSize: 14,
             lineHeight: 20,
-            color: isDark ? '#d1d1d1' : '#4f4f4f',
+            color: theme.colors.secondaryText,
             textAlign: 'justify',
+            fontFamily: 'Poppins_400Regular'
+        },
+        shadow: {
+            shadowColor: '#000',
+            ...Platform.select({
+            ios:{
+                shadowOpacity: 0.5,
+                shadowRadius: 7,
+                shadowOffset: {
+                height: 0,
+                width: 0
+                }
+            },
+            android:{
+                elevation: 5
+            }
+            })
         },
     });
 };

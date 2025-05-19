@@ -10,18 +10,18 @@ const Tab = createMaterialTopTabNavigator();
 
 // TipsExercisesScreen nur zum navigieren der Subscreens (SelfCareTips, Exercises)
 export const TipsExercisesScreen = () => {
-  const { scheme } = useContext(ThemeContext);
+  const { scheme, theme } = useContext(ThemeContext);
 
   return (
     <Tab.Navigator
       screenOptions={{
-        tabBarActiveTintColor: scheme === "dark" ? "#0A84FF" : "black",
-        tabBarInactiveTintColor: scheme === "dark" ? "#8E8E93" : "gray",
+        tabBarActiveTintColor: theme.colors.activeTab,
+        tabBarInactiveTintColor: theme.colors.inactiveTab,
         tabBarStyle: { 
-          backgroundColor: scheme === "dark" ? "#1c1c1e" : "#fff",
+          backgroundColor: theme.colors.tabBar
         },
         tabBarIndicatorStyle: {
-          backgroundColor: scheme === "dark" ? "#0A84FF" : "black",
+          backgroundColor: theme.colors.activeTab
         },
         tabBarLabelStyle: {
           fontSize: 18,

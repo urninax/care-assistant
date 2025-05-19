@@ -5,6 +5,7 @@ import {
   TextInput,
   Pressable,
   FlatList,
+  Platform
 } from "react-native";
 import React, { useContext, useState, useEffect } from "react";
 import Ionicons from "react-native-vector-icons/Ionicons";
@@ -12,10 +13,10 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { ThemeContext } from "../../utils/theme-context";
 
 export const PastGoals = ({ navigation, route }) => {
-  const { scheme } = useContext(ThemeContext);
+  const { scheme, theme } = useContext(ThemeContext);
   const [goals, setGoals] = useState([]);
 
-  const styles = getStyles(scheme);
+  const styles = getStyles(scheme, theme);
 
   // Verschobene Ziele von anderen Screens
   useEffect(() => {
@@ -26,7 +27,7 @@ export const PastGoals = ({ navigation, route }) => {
   }, [route.params?.goalAdd, navigation]);
 
   // Ziel bearbeiten
-  const editGoal = () => {
+  const editGoal = (item) => {
     if (item.id) {
       const updatedGoals = goals.map((goal) =>
         goal.id === item.id ? { ...goal, name: item.name } : goal
@@ -73,12 +74,12 @@ export const PastGoals = ({ navigation, route }) => {
 
 // Einzelnes Ziel rendern
 const SingleGoal = ({ item, moveGoal, editGoal }) => {
-  const { scheme } = useContext(ThemeContext);
+  const { scheme, theme } = useContext(ThemeContext);
   const [isEditing, setIsEditing] = useState(false);
 
-  const styles = getStyles(scheme);
+  const styles = getStyles(scheme, theme);
   return (
-    <View style={styles.goalItem}>
+    <View style={[styles.goalItem, styles.shadow]}>
       {isEditing ? (
         <TextInput
           style={styles.input}
@@ -106,21 +107,20 @@ const SingleGoal = ({ item, moveGoal, editGoal }) => {
           />
         </Pressable>
         <Pressable onPress={() => moveGoal(item.id, "CurrentGoals")}>
-          <Ionicons name="play" size={30} color="#4CD964" />
+          <Ionicons name="play-outline" size={30} color="#4CD964" />
         </Pressable>
         <Pressable onPress={() => moveGoal(item.id, "PauseGoals")}>
-          <Ionicons name="pause" size={30} color="#FF9500" />
+          <Ionicons name="pause-outline" size={30} color="red" />
         </Pressable>
       </View>
     </View>
   );
 };
 
-const getStyles = (scheme) =>
+const getStyles = (scheme, theme) =>
   StyleSheet.create({
     screen: {
       flex: 1,
-      backgroundColor: scheme === "dark" ? "#121212" : "#fff",
     },
     emptyContainer: {
       flex: 1,
@@ -129,14 +129,14 @@ const getStyles = (scheme) =>
     },
     emptyText: {
       fontSize: 16,
-      color: "#8E8E93",
+      color: theme.colors.secondaryText,
       textAlign: "center",
     },
     listContainer: {
       padding: 16,
     },
     goalItem: {
-      backgroundColor: "#D3D3D3",
+      backgroundColor: theme.colors.view,
       padding: 16,
       borderRadius: 10,
       marginBottom: 12,
@@ -145,22 +145,39 @@ const getStyles = (scheme) =>
       alignItems: "center",
     },
     goalText: {
-      fontSize: 25,
-      color: scheme === "dark" ? "#fff" : "#000",
+      fontSize: 20,
+      color: theme.colors.text,
+      flexShrink: 1,
+      flexWrap: 'wrap',
     },
     buttonContainer: {
       flexDirection: "column",
-      gap: 10,
+      gap: 10
     },
     input: {
-      width: "80%",
-      fontSize: 25,
-      borderWidth: 1,
-      borderColor: scheme === "dark" ? "#2C2C2E" : "#C7C7CC",
-      borderRadius: 5,
-      padding: 12,
-      marginBottom: 16,
-      color: scheme === "dark" ? "#fff" : "#000",
-      backgroundColor: scheme === "dark" ? "#2C2C2E" : "#F2F2F7",
+      fontSize: 20,
+      marginRight: 10,
+      borderRadius: 15,
+      padding: 10,
+      color: theme.colors.text,
+      backgroundColor: theme.colors.secondary,
+      flexShrink: 1,
+      flexWrap: 'wrap'
+    },
+    shadow: {
+      shadowColor: '#000',
+      ...Platform.select({
+        ios:{
+          shadowOpacity: 0.5,
+          shadowRadius: 7,
+          shadowOffset: {
+            height: 0,
+            width: 0
+          }
+        },
+        android:{
+          elevation: 5
+        }
+      })
     },
   });

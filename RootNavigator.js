@@ -76,6 +76,10 @@ export default function RootNavigator() {
             tabBarStyle: {
               backgroundColor: theme.colors.tabBar,
             },
+            headerStyle: {
+              backgroundColor: theme.colors.tabBar
+            },
+            headerTintColor: theme.colors.headerTint,
           }}
         >
           <Tab.Screen

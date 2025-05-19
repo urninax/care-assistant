@@ -1,13 +1,8 @@
 import { View, StyleSheet, Text } from "react-native"
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
-import { useFonts, Poppins_300Light, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
 
 export const TaskWidget = ({style, label, current, total, unit, isCircular}) => {
     const progress = (current / total) * 100;
-    const [fontsLoaded] = useFonts({
-        Poppins_300Light,
-        Poppins_600SemiBold
-      });
 
     return (
         isCircular ? (

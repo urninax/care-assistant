@@ -5,6 +5,7 @@ export const lightTheme = {
     colors: {
         ...DefaultTheme.colors,
         background: '#F2F2F2',
+        secondary:  '#E0E0E0',
         border:     '#d3d3d3',
         view:       '#FFFFFF',
         shadow:     '#000000',
@@ -13,6 +14,7 @@ export const lightTheme = {
         tabBar:     '#ffffff',
         headerTint: '#1c1c1e',
         statusBar:  '#ffffff',
+        secondaryText: '#555555'
     },
   };
   
@@ -21,6 +23,7 @@ export const lightTheme = {
     colors: {
         ...DarkTheme.colors,
         background: '#121212',
+        secondary:  '#2C2C2E',
         border:     '#1C1C1E',
         view:       '#1C1C1E',
         shadow:     '#FFFFFF',
@@ -29,5 +32,6 @@ export const lightTheme = {
         tabBar:     '#1c1c1e',
         headerTint: '#ffffff',
         statusBar:  '#1c1c1e',
+        secondaryText: '#AAAAAA'
     },
   };

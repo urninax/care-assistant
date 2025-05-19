@@ -1,30 +1,21 @@
 import { StyleSheet, View, Text, TextInput, Platform, Pressable, Keyboard, TouchableOpacity } from "react-native";
 import { Image } from 'expo-image'
 import { ProgressBar } from '../components/home-screen/progress-bar'
-import { useFonts, Poppins_400Regular, Poppins_300Light } from '@expo-google-fonts/poppins';
 import { TaskWidget } from "../components/home-screen/task-widget";
 import { SharedContext } from "../utils/shared-context";
 import { useContext, useRef} from "react";
 import { Ionicons } from '@expo/vector-icons';
 import { ThemeContext } from "../utils/theme-context";
+import { useNavigation } from "@react-navigation/native";
 
 export const HomeScreen = () => {
-
-  const { treeName, setTreeName } = useContext(SharedContext);
+  const { completedTasksCount, totalTasksCount, treeName, setTreeName } = useContext(SharedContext);
   const { scheme, theme } = useContext(ThemeContext);
+  const navigation = useNavigation();
 
   const styles = getStyles(scheme, theme);
 
   const treeNameInputRef = useRef(null)
-
-  const [fontsLoaded] = useFonts({
-    Poppins_400Regular,
-    Poppins_300Light
-  });
-
-  if (!fontsLoaded) {
-    return;
-  }
 
   return (
     <>
@@ -71,12 +62,12 @@ export const HomeScreen = () => {
           <Text style={[styles.motivationalText1, styles.shadow, styles.textColor]}>{`Your tree is healing!`}</Text>
           <Text style={[styles.motivationalText2, styles.shadow, styles.textColor]}>{`Keep it this way!`}</Text>
         </View>
-        <TouchableOpacity style={[styles.progressContainer, styles.shadow]}>
+        <TouchableOpacity onPress={() => navigation.navigate("Tasks")} style={[styles.progressContainer, styles.shadow]}>
           <View style={styles.progressTextContainer}>
             <Text style={[styles.label, styles.textColor]}>Your progress</Text>
             <Ionicons name='chevron-forward-outline' size={20} style={[{ marginLeft: 'auto' }, styles.textColor]}></Ionicons>
           </View>
-            <ProgressBar current={4} total={5} />
+            <ProgressBar current={completedTasksCount} total={totalTasksCount} />
         </TouchableOpacity>
       </Pressable>
     </>

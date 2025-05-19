@@ -1,6 +1,5 @@
 import { Text, View, StyleSheet } from "react-native"
 import { useContext, useState } from "react";
-import { useFonts, Poppins_300Light, Poppins_500Medium, Poppins_700Bold } from "@expo-google-fonts/poppins";
 import { ThemeContext } from "../utils/theme-context";
 import { ScrollView } from "react-native";
 import { Image } from 'expo-image'
@@ -16,16 +15,6 @@ export const ProfileScreen = () => {
 
     const { scheme, theme, setScheme } = useContext(ThemeContext);
     const styles = getStyles(scheme, theme)
-
-    const [fontsLoaded] = useFonts({
-      Poppins_700Bold,
-      Poppins_500Medium,
-      Poppins_300Light
-    });
-    
-    if (!fontsLoaded) {
-      return;
-    }
 
     return (
       <SafeAreaProvider>
@@ -46,7 +35,7 @@ export const ProfileScreen = () => {
             </View>
             <View style={styles.buttonsContainer}>
               <PageButton iconName='settings-outline' buttonText='Settings' navigateTo='Settings'/>
-              <PageButton iconName='notifications-outline' buttonText='Activity'/>
+              {/* <PageButton iconName='notifications-outline' buttonText='Activity'/> */}
               <PageButton iconName='chatbubbles-outline' buttonText='FAQ' navigateTo='FAQ'/>
             </View>
             <View style={styles.streakContainer}>

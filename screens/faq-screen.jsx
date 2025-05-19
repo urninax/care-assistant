@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { ThemeContext } from '../utils/theme-context';
+import { useContext } from 'react';
 
 const faqs = [
     {
@@ -43,6 +45,9 @@ const faqs = [
 
 
 const FAQScreen = () => {
+    const {theme} = useContext(ThemeContext);
+    const styles = getStyles(theme)
+
     return (
         <ScrollView style={styles.container}>
             <Text style={styles.header}>Frequently Asked Questions</Text>
@@ -52,7 +57,10 @@ const FAQScreen = () => {
             </View>
             {faqs.map((faq, index) => (
                 <View key={index} style={styles.card}>
-                    <Text style={styles.question}>❓ {faq.question}</Text>
+                    <View style={styles.questionContainer}>
+                        <Text style={styles.questionMark}>❓</Text>
+                        <Text style={styles.question}>{faq.question}</Text>
+                    </View>
                     <Text style={styles.answer}>{faq.answer}</Text>
                 </View>
             ))}
@@ -60,26 +68,64 @@ const FAQScreen = () => {
     );
 };
 
-const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fdfdfd', padding: 16 },
-    header: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 16 },
-    treeContainer: {
-        alignItems: 'center',
-        marginBottom: 24,
-        padding: 16,
-        backgroundColor: '#e8f5e9',
-        borderRadius: 12,
-    },
-    treeText: { marginTop: 8, fontSize: 16, textAlign: 'center', color: '#2e7d32' },
-    card: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        padding: 16,
-        marginBottom: 12,
-        elevation: 2,
-    },
-    question: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
-    answer: { fontSize: 14, color: '#555' },
+const getStyles = (theme) => 
+    StyleSheet.create({
+        container: { 
+            flex: 1,
+            padding: 16 
+        },
+        header: { 
+            fontSize: 24, 
+            // fontWeight: 'bold', 
+            fontFamily: 'Poppins_700Bold',
+            textAlign: 'center', 
+            marginBottom: 16,
+            color: theme.colors.text
+        },
+        treeContainer: {
+            alignItems: 'center',
+            marginBottom: 24,
+            padding: 16,
+            backgroundColor: theme.dark ? '#1e2f23' : '#d0edd4',
+            borderRadius: 12,
+        },
+        treeText: { 
+            marginTop: 8, 
+            fontSize: 16, 
+            fontFamily: 'Poppins_400Regular',
+            textAlign: 'center', 
+            color: theme.dark ? '#4CAF50' : '#2e7d32',
+        },
+        card: {
+            backgroundColor: theme.colors.view,
+            borderRadius: 10,
+            padding: 16,
+            marginBottom: 12,
+            elevation: 2,
+        },
+        questionContainer: {
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            width: '100%'
+        },
+        questionMark: {
+            fontSize: 16, 
+            fontWeight: '600',
+            marginBottom: 8,
+            color: theme.colors.text,
+        },
+        question: { 
+            fontSize: 16, 
+            fontWeight: '600',
+            marginBottom: 8,
+            color: theme.colors.text,
+            flexShrink: 1,
+            flexWrap: 'wrap', 
+        },
+        answer: { 
+            fontSize: 14, 
+            color: theme.colors.secondaryText
+        },
 });
 //
 export default FAQScreen;
