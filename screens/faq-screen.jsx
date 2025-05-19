@@ -49,7 +49,7 @@ const FAQScreen = () => {
     const styles = getStyles(theme)
 
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
             <Text style={styles.header}>Frequently Asked Questions</Text>
             <View style={styles.treeContainer}>
                 <Ionicons name="leaf" size={64} color="#4CAF50" />
@@ -72,7 +72,10 @@ const getStyles = (theme) =>
     StyleSheet.create({
         container: { 
             flex: 1,
-            padding: 16 
+            // padding: 16,
+        },
+        contentContainer: {
+            padding: 13,
         },
         header: { 
             fontSize: 24, 
@@ -116,7 +119,7 @@ const getStyles = (theme) =>
         },
         question: { 
             fontSize: 16, 
-            fontWeight: '600',
+            fontFamily: 'Poppins_600SemiBold',
             marginBottom: 8,
             color: theme.colors.text,
             flexShrink: 1,
@@ -124,7 +127,8 @@ const getStyles = (theme) =>
         },
         answer: { 
             fontSize: 14, 
-            color: theme.colors.secondaryText
+            color: theme.colors.secondaryText,
+            fontFamily: 'Poppins_400Regular'
         },
 });
 //
