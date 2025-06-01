@@ -1,26 +1,15 @@
 import React, { useState, useEffect, useLayoutEffect, useContext} from 'react';
 import {
     View, Text, StyleSheet, FlatList,
-    TextInput, TouchableOpacity, Modal, Button, Platform
+    TextInput, TouchableOpacity, Modal, Button, Platform, Alert
 } from 'react-native';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 import { ProgressBar } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Circle } from 'react-native-svg';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ThemeContext } from '../utils/theme-context';
 import { SharedContext } from '../utils/shared-context';
-
-const defaultTasks = [
-    { id: '1', category: 'Movement', title: 'Steps', current: 7000, total: 10000 },
-    { id: '2', category: 'Movement', title: 'Pull Ups', current: 10, total: 30 },
-    { id: '3', category: 'Movement', title: 'Meditation', current: 10, total: 10 },
-    { id: '4', category: 'Nutrition', title: 'Protein', current: 80, total: 160 },
-    { id: '5', category: 'Nutrition', title: 'Water', current: 500, total: 2000 },
-    { id: '6', category: 'Sleep', title: 'Sleep Hours', current: 6, total: 8 },
-    { id: '7', category: 'Mental Health', title: 'Gratitude Journal', current: 1, total: 1 },
-    { id: '8', category: 'Productivity', title: 'Read Pages', current: 15, total: 30 }
-];
+import { TaskContext } from '../utils/task-context';
 
 const getProgressMessage = (progress) => {
     if (progress === 0) return 'Start right now';
@@ -80,33 +69,20 @@ const CircularProgress = ({ progress, radius = 50, strokeWidth = 10, color = '#0
 
 const TasksScreen = ({ navigation }) => {
     const { theme } = useContext(ThemeContext)
-    const { completedTasksCount, setCompletedTasksCount, totalTasksCount, setTotalTasksCount} = useContext(SharedContext)
+    const { completedTasksCount, totalTasksCount} = useContext(SharedContext)
+    const { tasks, setTasks } = useContext(TaskContext);
     const styles = getStyles(theme)
 
-    const [tasks, setTasks] = useState([]);
-    const [newTask, setNewTask] = useState({ title: '', category: '', current: 0, total: 0 });
+    const [newTask, setNewTask] = useState({ title: '', category: '', current: '', total: '' });
     const [modalVisible, setModalVisible] = useState(false);
     const [addTaskModalVisible, setAddTaskModalVisible] = useState(false);
+    const [editTaskModalVisible, setEditTaskModalVisible] = useState(false);
     const [currentTask, setCurrentTask] = useState(null);
     const [addValue, setAddValue] = useState('');
 
     const [taskToDelete, setTaskToDelete] = useState(null);
+    const [taskToEdit, setTaskToEdit] = useState({ title: '', category: '', current: '', total: '' });
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-
-    useEffect(() => {
-        loadTasks();
-    }, []);
-
-
-    useEffect(() => {
-        saveTasks(tasks);
-    }, [tasks]);
-
-    useEffect(() => {
-        const completed = tasks.filter(task => task.current >= task.total).length;
-        setCompletedTasksCount(completed);
-        setTotalTasksCount(tasks.length);
-    }, [tasks]);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -116,28 +92,7 @@ const TasksScreen = ({ navigation }) => {
                 </TouchableOpacity>
             )
         });
-    }, [navigation]);
-
-    const loadTasks = async () => {
-        try {
-            const storedTasks = await AsyncStorage.getItem('tasks');
-            if (storedTasks) {
-                setTasks(JSON.parse(storedTasks));
-            } else {
-                setTasks(defaultTasks);
-            }
-        } catch (error) {
-            console.error('Failed to load tasks', error);
-        }
-    };
-
-    const saveTasks = async (tasksToSave) => {
-        try {
-            await AsyncStorage.setItem('tasks', JSON.stringify(tasksToSave));
-        } catch (error) {
-            console.error('Failed to save tasks', error);
-        }
-    };
+    }, [navigation, theme]);
 
     const totalProgress = tasks.length
         ? tasks.reduce((acc, task) => acc + (task.total > 0 ? task.current / task.total : 0), 0) / tasks.length
@@ -145,14 +100,33 @@ const TasksScreen = ({ navigation }) => {
 
 
     const handleAddTask = () => {
-        if (newTask.title && newTask.category) {
-            const newId = (tasks.length + 1).toString();
-            const newTaskEntry = { ...newTask, id: newId };
-            const updatedTasks = [...tasks, newTaskEntry];
-            setTasks(updatedTasks);
-            setNewTask({ title: '', category: '', current: 0, total: 0 });
-            setAddTaskModalVisible(false);
+        if(!newTask.title || !newTask.category){
+            Alert.alert('Please enter both a category and a title.')
+            return;
         }
+        if(!newTask.total){
+            Alert.alert('Total should not be empty.')
+            return;
+        }
+        if(!newTask.current){
+            Alert.alert('Current should not be empty.')
+            return;
+        }
+        if(parseInt(newTask.total) <= 0){
+            Alert.alert('Total must be greater than zero');
+            return;
+        }
+        if(parseInt(newTask.current) <= 0){
+            Alert.alert('Current must be greater than zero');
+            return;
+        }
+        const newId = (tasks.length + 1).toString();
+        const newTaskEntry = { ...newTask, current: parseInt(newTask.current), total: parseInt(newTask.total), id: newId };
+        const updatedTasks = [...tasks, newTaskEntry];
+        setTasks(updatedTasks);
+        setNewTask({ title: '', category: '', current: '', total: '' });
+        setAddTaskModalVisible(false);
+
     };
 
     const openAddValueModal = (task) => {
@@ -185,6 +159,25 @@ const TasksScreen = ({ navigation }) => {
         setDeleteModalVisible(true);
     };
 
+    const openEditModal = (task) => {
+        console.log(task)
+        setTaskToEdit(task);
+        setEditTaskModalVisible(true);
+    }
+
+    const handleEditTask = () => {
+        if(taskToEdit){
+            const updatedTasks = tasks.map(task =>
+                task.id === taskToEdit.id
+                    ? { ...taskToEdit, current: task.current}
+                    : task
+            );
+            setTasks(updatedTasks);
+            setTaskToEdit({ title: '', category: '', current: '', total: '' });
+        }
+        setEditTaskModalVisible(false)
+    }
+
     const confirmDeleteTask = () => {
         if (taskToDelete) {
             const updatedTasks = tasks.filter(task => task.id !== taskToDelete.id);
@@ -196,6 +189,12 @@ const TasksScreen = ({ navigation }) => {
 
     const renderItem = ({ item }) => {
         const progress = item.current / item.total;
+        const color = progress >= 0.7
+            ? 'green'
+            : progress >= 0.5
+            ? 'orange'
+            : 'red'
+
         return (
             <View style={[styles.taskContainer, styles.shadow]}>
                 <Text style={styles.title}>{item.title}</Text>
@@ -206,7 +205,10 @@ const TasksScreen = ({ navigation }) => {
                         <TouchableOpacity onPress={() => openAddValueModal(item)}>
                             <Ionicons name="add-circle-outline" size={24} color="#007AFF" />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => openDeleteModal(item)} style={{ marginLeft: 12 }}>
+                        <TouchableOpacity onPress={() => openEditModal(item)} style={{marginHorizontal: 8}}>
+                            <Ionicons name="pencil-outline" size={23} color="#007AFF" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => openDeleteModal(item)}>
                             <Ionicons name="trash-outline" size={24} color="red" />
                         </TouchableOpacity>
                     </View>
@@ -214,26 +216,34 @@ const TasksScreen = ({ navigation }) => {
 
                 <ProgressBar
                     progress={progress}
-                    color={progress >= 1 ? 'green' : 'red'}
+                    color={color}
                     style={styles.progressBar}
                 />
             </View>
         );
     };
 
+    const capitalize = (s) =>
+        s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();      
 
-    const categories = [...new Set(tasks.map(task => task.category))];
+    const categories = [...new Set(tasks.map(task => task.category.trim().toLowerCase()))];
 
-    const renderCategory = ({ item: category }) => (
-        <View style={styles.categoryContainer}>
-            <Text style={styles.categoryHeader}>{category}</Text>
-            <FlatList
-                data={tasks.filter(task => task.category === category)}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-            />
-        </View>
-    );
+    const renderCategory = ({ item: category }) => {
+        const displayName = capitalize(category);
+        const tasksInCategory = tasks.filter(
+            task => task.category.trim().toLowerCase() === category
+        );
+        return (
+            <View style={styles.categoryContainer}>
+                <Text style={styles.categoryHeader}>{displayName}</Text>
+                <FlatList
+                    data={tasksInCategory}
+                    renderItem={renderItem}
+                    keyExtractor={(item) => item.id}
+                />
+            </View>
+        )
+    };
 
     return (
         <SafeAreaProvider>
@@ -283,8 +293,8 @@ const TasksScreen = ({ navigation }) => {
                             <Text style={styles.modalHeader}>Add New Task</Text>
                             <TextInput placeholder="Category" placeholderTextColor={theme.colors.secondaryText} value={newTask.category} onChangeText={(text) => setNewTask({ ...newTask, category: text })} style={styles.input} />
                             <TextInput placeholder="Title" placeholderTextColor={theme.colors.secondaryText} value={newTask.title} onChangeText={(text) => setNewTask({ ...newTask, title: text })} style={styles.input} />
-                            <TextInput placeholder="Current" keyboardType="numeric" value={String(newTask.current)} onChangeText={(text) => setNewTask({ ...newTask, current: parseInt(text) || 0 })} style={styles.input} />
-                            <TextInput placeholder="Total" keyboardType="numeric" value={String(newTask.total)} onChangeText={(text) => setNewTask({ ...newTask, total: parseInt(text) || 0 })} style={styles.input} />
+                            <TextInput placeholder="Current" placeholderTextColor={theme.colors.secondaryText} keyboardType="numeric" value={newTask.current} onChangeText={(text) => setNewTask({ ...newTask, current: text.replace(/[^0-9]/g, '') })} style={styles.input} />
+                            <TextInput placeholder="Total" placeholderTextColor={theme.colors.secondaryText} keyboardType="numeric" value={newTask.total} onChangeText={(text) => setNewTask({ ...newTask, total: text.replace(/[^0-9]/g, '') })} style={styles.input} />
                             <Button title="Add Task" onPress={handleAddTask} />
                             <Button title="Cancel" color="red" onPress={() => setAddTaskModalVisible(false)} />
                         </View>
@@ -302,8 +312,25 @@ const TasksScreen = ({ navigation }) => {
                         </View>
                     </View>
                 </Modal>
+
+                <Modal visible={editTaskModalVisible} transparent animationType="fade">
+                    <View style={styles.modalContainer}>
+                        <View style={styles.modalContent}>
+                            <Text style={styles.modalHeader}>Edit Task</Text>
+                            <Text style={styles.modalLabel}>Category</Text>
+                            <TextInput placeholder="Category" placeholderTextColor={theme.colors.secondaryText} value={taskToEdit.category} onChangeText={(text) => setTaskToEdit({ ...taskToEdit, category: text })} style={styles.input} />
+                            <Text style={styles.modalLabel}>Title</Text>
+                            <TextInput placeholder="Title" placeholderTextColor={theme.colors.secondaryText} value={taskToEdit.title} onChangeText={(text) => setTaskToEdit({ ...taskToEdit, title: text })} style={styles.input} />
+                            <Text style={styles.modalLabel}>Total</Text>
+                            <TextInput placeholder="Total" placeholderTextColor={theme.colors.secondaryText} keyboardType="numeric" value={String(taskToEdit.total)} onChangeText={(text) => setTaskToEdit({ ...taskToEdit, total: text.replace(/[^0-9]/g, '') })} style={styles.input} />
+                            <Button title="Edit" onPress={handleEditTask} />
+                            <Button title="Cancel" color="red" onPress={() => setEditTaskModalVisible(false)} />
+                        </View>
+                    </View>
+                </Modal>
             </SafeAreaView>
         </SafeAreaProvider>
+        
     );
 };
 
@@ -351,21 +378,10 @@ const getStyles = (theme) => StyleSheet.create({
         paddingBottom: 10,
         color: theme.colors.text
     },
-    // taskContainer: {
-    //     flexDirection: 'row',
-    //     justifyContent: 'space-between',
-    //     alignItems: 'center',
-    //     marginBottom: 12,
-    //     padding: 12,
-    //     backgroundColor: '#fff',
-    //     borderRadius: 8,
-    //     elevation: 2
-    // },
     title: { fontSize: 18, fontFamily: 'Poppins_500Medium', color: theme.colors.text},
-    // progressBar: { height: 15, borderRadius: 5, marginTop: 4 },
     modalContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.5)' },
     modalContent: { backgroundColor: theme.colors.view, padding: 20, borderRadius: 10, width: '80%' },
-    modalHeader: { fontSize: 20, fontWeight: 'bold', marginBottom: 12, color: theme.colors.text, textAlign: 'center' },
+    modalHeader: { fontSize: 20, fontFamily: 'Poppins_700Bold', marginBottom: 12, color: theme.colors.text, textAlign: 'center' },
     taskCounter: { 
         textAlign: 'center', 
         fontSize: 16, 
@@ -384,6 +400,13 @@ const getStyles = (theme) => StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 8,
+    },
+    modalLabel: {
+        fontSize: 15,
+        fontFamily: 'Poppins_500Medium',
+        marginTop: 5,
+        marginLeft: 5,
+        color: theme.colors.text
     },
     progressBar: {
         height: 15,

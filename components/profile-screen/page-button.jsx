@@ -6,10 +6,10 @@ import { ThemeContext } from '../../utils/theme-context';
 import { useNavigation } from '@react-navigation/native';
 
 export const PageButton = ({iconName, buttonText, navigateTo}) => {
-    const { schema, theme } = useContext(ThemeContext)
+    const { theme } = useContext(ThemeContext)
     const navigation = useNavigation();
     
-    const styles = getStyles(schema, theme)
+    const styles = getStyles(theme)
 
     const [fontsLoaded] = useFonts({
         Poppins_500Medium,
@@ -33,7 +33,7 @@ export const PageButton = ({iconName, buttonText, navigateTo}) => {
     )
 }
 
-const getStyles = (scheme, theme) => 
+const getStyles = (theme) => 
     StyleSheet.create({
         button: {
             borderWidth: 1,

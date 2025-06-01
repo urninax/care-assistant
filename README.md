@@ -10,8 +10,7 @@ Framework:	[React Native Android]
 
 API-Version:	[Android API-Level 31]
 
-Gerät(e), auf dem(denen) getestet wurde:
-[Pixel6]
+Gerät(e), auf dem(denen) getestet wurde: [Pixel6, iPhone 16 Pro, iPhone 12]
 
 Externe Libraries und Frameworks:
 [

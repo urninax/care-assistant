@@ -13,10 +13,10 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { ThemeContext } from "../../utils/theme-context";
 
 export const PauseGoals = ({ navigation, route }) => {
-  const { scheme, theme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
   const [goals, setGoals] = useState([]);
 
-  const styles = getStyles(scheme, theme);
+  const styles = getStyles(theme);
 
   // Verschobene Ziele von anderen Screens
   useEffect(() => {
@@ -77,7 +77,7 @@ const SingleGoal = ({ item, moveGoal, editGoal }) => {
   const { scheme, theme } = useContext(ThemeContext);
   const [isEditing, setIsEditing] = useState(false);
 
-  const styles = getStyles(scheme, theme);
+  const styles = getStyles(theme);
   return (
     <View style={[styles.goalItem, styles.shadow]}>
       {isEditing ? (
@@ -117,7 +117,7 @@ const SingleGoal = ({ item, moveGoal, editGoal }) => {
   );
 };
 
-const getStyles = (scheme, theme) =>
+const getStyles = (theme) =>
   StyleSheet.create({
     screen: {
       flex: 1,

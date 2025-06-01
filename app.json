@@ -22,7 +22,11 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "supportsDarkMode": true
+      "supportsDarkMode": true,
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "package": "com.urninax.careassistant"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,6 +38,11 @@
           "cameraPermission": "The app accesses your camera to let you take a picture for your profile picture"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "3d1d2b7b-423b-47ae-8749-21597a19bf08"
+      }
+    }
   }
 }

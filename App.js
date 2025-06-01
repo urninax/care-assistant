@@ -3,6 +3,7 @@ import { ThemeProvider } from './utils/theme-context';
 import RootNavigator from "./RootNavigator";
 import { enableScreens } from 'react-native-screens'
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
+import { TaskProvider } from "./utils/task-context";
 import { 
   useFonts, 
   Poppins_100Thin, 
@@ -32,16 +33,18 @@ export default function App() {
   });
 
   if (!fontsLoaded) {
-    return;
+    return null;
   }
 
   return (
-    <SharedContextProvider>
-      <ThemeProvider>
-        <ActionSheetProvider>
-          <RootNavigator/>
-        </ActionSheetProvider>
-      </ThemeProvider>
-    </SharedContextProvider>
+    <TaskProvider>
+      <SharedContextProvider>
+        <ThemeProvider>
+          <ActionSheetProvider>
+            <RootNavigator/>
+          </ActionSheetProvider>
+        </ThemeProvider>
+      </SharedContextProvider>
+    </TaskProvider>
   );
 }

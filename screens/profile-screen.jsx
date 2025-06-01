@@ -11,9 +11,7 @@ import { PageButton } from "../components/profile-screen/page-button";
 
 
 export const ProfileScreen = () => {
-    // const tabBarHeight = useBottomTabBarHeight();
-
-    const { scheme, theme, setScheme } = useContext(ThemeContext);
+    const { scheme, theme } = useContext(ThemeContext);
     const styles = getStyles(scheme, theme)
 
     return (
@@ -22,7 +20,6 @@ export const ProfileScreen = () => {
           <ScrollView 
             style={styles.screen}
             contentContainerStyle={styles.contentContainer}
-            // contentInset={{ bottom: tabBarHeight }}
             contentInsetAdjustmentBehavior="automatic">
             <View style={styles.profilePictureContainer}>
               <ProfileAvatar

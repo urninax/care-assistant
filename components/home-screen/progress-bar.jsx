@@ -10,8 +10,8 @@ export const ProgressBar =  ({current, total}) => {
         ? 'orange'
         : 'red'
     
-    const { scheme, theme } = useContext(ThemeContext)
-    const styles = getStyles(scheme,theme)
+    const { theme } = useContext(ThemeContext)
+    const styles = getStyles(theme)
 
     return (
         <View style={styles.progressRow}>
@@ -27,7 +27,7 @@ export const ProgressBar =  ({current, total}) => {
 }
 
 
-const getStyles = (scheme, theme) =>
+const getStyles = (theme) =>
     StyleSheet.create({
         progressRow: {
             flexDirection: 'row',

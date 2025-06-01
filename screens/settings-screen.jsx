@@ -2,24 +2,27 @@ import { Text, View, Button, StyleSheet, TouchableOpacity, Platform } from "reac
 import { useContext } from "react";
 import {SafeAreaView, SafeAreaProvider} from 'react-native-safe-area-context';
 import { ThemeContext } from "../utils/theme-context";
+import { ProfileAvatar } from "../components/profile-screen/profile-avatar";
+import { useProfileAvatar } from "../utils/useProfileAvatar";
 
 export const SettingsScreen = () => {
     const { scheme, setScheme, theme } = useContext(ThemeContext);
+    const { openMenu } = useProfileAvatar();
     const styles = getStyles(theme);
 
     return (
       <SafeAreaProvider>
         <SafeAreaView style = {styles.container}>
-          {/* <View style = {styles.container1}>
-          <Text style = {styles.titleText}>Current Theme: {scheme}</Text>
-          </View>
-          <Text style = {styles.spaces}>{'\n'}</Text>
-          <Button title="System" onPress={() => setScheme('system') } color = "darkblue"/>
-          <Text style = {styles.spaces}>{'\n'}</Text>
-          <Button title="Light" onPress={() => setScheme('light')} color = "darkblue"/>
-          <Text style = {styles.spaces}>{'\n'}</Text>
-          <Button title="Dark" onPress={() => setScheme('dark')} color = "darkblue"/> */}
           <View style={styles.container1}>
+            <View style={styles.profilePictureContainer}>
+              <ProfileAvatar
+                containerStyle={styles.profilePictureInnerContainer}
+                imageStyle={styles.profilePicture}
+              />
+            </View>
+            <TouchableOpacity onPress={openMenu} style={styles.editProfilePictureTextContainer}>
+              <Text style={styles.editProfilePictureText}>Edit Profile Picture</Text>
+            </TouchableOpacity>
             <Text style={styles.titleText}>Current Theme: {scheme}</Text>
 
             <View style={styles.buttonRow}>
@@ -53,25 +56,6 @@ export const SettingsScreen = () => {
 
 const getStyles = (theme) =>
   StyleSheet.create({
-    // titleText: {
-    //   fontSize: 20,
-    //   fontWeight: 'bold',
-    //   color:  scheme === "dark" ? "black" : "white",
-    //   textAlign: 'center',
-    // },
-    // container1: {
-    //   backgroundColor: scheme === "dark" ? "lightgrey" : "darkgrey",
-    // },
-    // spaces: {
-    //   fontSize: 5,
-    // },
-    // container: {
-    //   flex: 1,
-    //   justifyContent: 'space-between',
-    //   padding: 5,
-    //   marginHorizontal: 75,
-    //   marginVertical: 25,
-    // },
     container: {
       flex: 1,
       padding: 20,
@@ -79,6 +63,30 @@ const getStyles = (theme) =>
     container1: {
       alignItems: 'center',
       marginBottom: 20,
+    },
+    profilePictureContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    profilePictureInnerContainer: {
+      alignItems: 'center',
+      height: 65,
+      aspectRatio: 1,
+      borderRadius: 60,
+      overflow: 'hidden',
+    },
+    profilePicture: {
+      height: '100%',
+      width: '100%',
+    },
+    editProfilePictureTextContainer:{
+      marginVertical: 7,
+      paddingVertical: 5,
+    },
+    editProfilePictureText: {
+      fontFamily: 'Poppins_400Regular',
+      color: 'blue',
+      fontSize: 15
     },
     titleText: {
       fontSize: 18,

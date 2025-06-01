@@ -1,19 +1,32 @@
 import React, { createContext } from "react";
-import { useState } from "react";
+import { useState, useMemo, useContext } from "react";
+import { TaskContext } from "./task-context";
 
-export const SharedContext = createContext({});
+export const SharedContext = createContext({
+  treeName: "",
+  setTreeName: () => {},
+  completedTasksCount: 0,
+  totalTasksCount: 0,
+});
 
 export function SharedContextProvider({ children }) {
+  const { tasks } = useContext(TaskContext);
   const [treeName, setTreeName] = useState("");
-  const [completedTasksCount, setCompletedTasksCount] = useState(0);
-  const [totalTasksCount, setTotalTasksCount] = useState(0);
+  const [avatarUri, setAvatarUri] = useState('');
+
+  const { completedTasksCount, totalTasksCount } = useMemo(() => {
+    const total = tasks.length;
+    const completed = tasks.filter(t => t.current >= t.total).length;
+    return { totalTasksCount: total, completedTasksCount: completed };
+  }, [tasks]);
 
   return (
     <SharedContext.Provider
       value={{
         treeName, setTreeName,
-        completedTasksCount, setCompletedTasksCount,
-        totalTasksCount, setTotalTasksCount,
+        avatarUri, setAvatarUri,
+        completedTasksCount,
+        totalTasksCount,
       }}
     >
       {children}

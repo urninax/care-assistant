@@ -1,7 +1,6 @@
 import { StyleSheet, View, Text, TextInput, Platform, Pressable, Keyboard, TouchableOpacity } from "react-native";
 import { Image } from 'expo-image'
 import { ProgressBar } from '../components/home-screen/progress-bar'
-import { TaskWidget } from "../components/home-screen/task-widget";
 import { SharedContext } from "../utils/shared-context";
 import { useContext, useRef} from "react";
 import { Ionicons } from '@expo/vector-icons';
@@ -20,19 +19,6 @@ export const HomeScreen = () => {
   return (
     <>
       <Pressable style={styles.screen} onPress={() => Keyboard.dismiss()} android_ripple={{ color: 'transparent' }}>
-        {/* <View style={styles.taskWidgetsContainer}>
-          <TaskWidget 
-            style={styles.taskWidget}
-            label='Progress'
-            current={300}
-            total={450}
-            unit='g'
-            isCircular={true}
-          />
-          <View style={styles.taskWidget}>
-
-          </View>
-        </View> */}
         <View style={styles.treeNameContainer}>
           <View style={styles.treeNameContentWrapper}>
             <View style={[styles.treeNameInputContainer, styles.shadow]}>

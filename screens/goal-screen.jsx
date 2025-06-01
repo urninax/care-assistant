@@ -11,7 +11,7 @@ const Tab = createMaterialTopTabNavigator();
 
 // GoalScreen nur zum navigieren der Subscreens (CurrentGoals, PauseGoals, PastGoals)
 export const GoalScreen = () => {
-  const { theme, scheme } = useContext(ThemeContext);
+  const { theme } = useContext(ThemeContext);
 
   return (
     <Tab.Navigator
