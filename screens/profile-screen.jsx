@@ -1,5 +1,5 @@
 import { Text, View, StyleSheet } from "react-native"
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { ThemeContext } from "../utils/theme-context";
 import { ScrollView } from "react-native";
 import { Image } from 'expo-image'
@@ -8,11 +8,13 @@ import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
 
 import { ProfileAvatar } from "../components/profile-screen/profile-avatar";
 import { PageButton } from "../components/profile-screen/page-button";
+import { SharedContext } from "../utils/shared-context";
 
 
 export const ProfileScreen = () => {
     const { scheme, theme } = useContext(ThemeContext);
     const styles = getStyles(scheme, theme)
+    const {streakCount, treeStage} = useContext(SharedContext);
 
     return (
       <SafeAreaProvider>
@@ -37,7 +39,8 @@ export const ProfileScreen = () => {
             </View>
             <View style={styles.streakContainer}>
               <View style={styles.streakHeaderContainer}>
-                <Text style={styles.streakHeaderText}>6-week streak</Text>
+                <Text style={styles.streakHeaderText}>{streakCount}-day streak</Text>
+                {/* <Text style={styles.streakHeaderText}>{treeStage} tree stage</Text> */}
               </View>
               <View style={styles.streakIconContainer}>
                 <View style={styles.streakIconInnerContainer}>
@@ -51,7 +54,7 @@ export const ProfileScreen = () => {
                       numberOfLines={1}
                       adjustsFontSizeToFit
                       minimumFontScale={0.5}
-                    >6</Text>
+                    >{streakCount}</Text>
                   </View>
                 </View>
               </View>

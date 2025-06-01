@@ -7,14 +7,26 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemeContext } from "../utils/theme-context";
 import { useNavigation } from "@react-navigation/native";
 
+const TREE_STAGE_GIFS = {
+  "-2": require("../images/tree-yellow-stage2-1.4-0.55-0.1-cropped.gif"),
+  "-1": require("../images/tree-yellow-stage1-1.2-0.75-0.45-cropped.gif"),
+  "0":  require("../images/tree-green-stage0-cropped.gif"),
+  "1":  require("../images/tree-pink-stage1-1.5-0.65-1.4-cropped.gif"),
+  "2":  require("../images/tree-pink-stage2-1.75-0.5-1.6-cropped.gif"),
+};
+
+
+
 export const HomeScreen = () => {
-  const { completedTasksCount, totalTasksCount, treeName, setTreeName } = useContext(SharedContext);
+  const { completedTasksCount, totalTasksCount, treeName, setTreeName, treeStage } = useContext(SharedContext);
   const { scheme, theme } = useContext(ThemeContext);
   const navigation = useNavigation();
 
   const styles = getStyles(scheme, theme);
 
   const treeNameInputRef = useRef(null)
+  const gifSource =
+    TREE_STAGE_GIFS[treeStage] ?? TREE_STAGE_GIFS["0"];
 
   return (
     <>
@@ -39,7 +51,7 @@ export const HomeScreen = () => {
         </View>
         <View style={styles.treeContainer}>
           <Image
-            source={require('../images/tree-pink-stage1-1.5-0.65-1.4-cropped.gif')}
+            source={gifSource}
             style={styles.gif}
             contentFit="contain"
           />

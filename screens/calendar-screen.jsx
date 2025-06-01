@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { ThemeContext } from "../utils/theme-context";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { SharedContext } from "../utils/shared-context";
 
 // Teilweise überschreiben von LocaleConfig, um Anzeige der Tagesnamen anzupassen
 LocaleConfig.locales["en-custom"] = {
@@ -62,6 +63,8 @@ const emojiMap = {
   "2025-05-10": "sad-outline",
   "2025-05-13": "sad-outline",
 };
+const ICON_TRUE = "happy-outline";
+const ICON_FALSE = "sad-outline";
 
 //Farbzuweisung zu Emojis
 const iconColors = {
@@ -71,6 +74,7 @@ const iconColors = {
 
 export const CalendarScreen = () => {
   const { scheme } = useContext(ThemeContext);
+  const { dailyStatus } = useContext(SharedContext)
 
   const styles = getStyles(scheme);
   return (
@@ -99,7 +103,15 @@ export const CalendarScreen = () => {
         }}
         // Mit dayComponent eigene Tagesanzeige erstellt; wenn Tag nicht im aktuellen Monat ist ("disabled") Farbe = grey, sonst schwarz; Icon wird angezeigt; aus emojiMap dem Tag zugewiesen
         dayComponent={({ date, state }) => {
-          const iconName = emojiMap[date.dateString];
+          // const iconName = emojiMap[date.dateString];
+
+          const status = dailyStatus[date.dateString];
+          let iconName = null;
+          if (status === true) {
+            iconName = ICON_TRUE;
+          } else if (status === false) {
+            iconName = ICON_FALSE;
+          }
           return (
             <View style={[styles.dayContainer]}>
               <Text

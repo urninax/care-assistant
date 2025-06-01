@@ -98,7 +98,7 @@ const TasksScreen = ({ navigation }) => {
         ? tasks.reduce((acc, task) => acc + (task.total > 0 ? task.current / task.total : 0), 0) / tasks.length
         : 0;
 
-
+    
     const handleAddTask = () => {
         if(!newTask.title || !newTask.category){
             Alert.alert('Please enter both a category and a title.')
@@ -160,7 +160,6 @@ const TasksScreen = ({ navigation }) => {
     };
 
     const openEditModal = (task) => {
-        console.log(task)
         setTaskToEdit(task);
         setEditTaskModalVisible(true);
     }
